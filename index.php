@@ -15,6 +15,9 @@
             margin: 10px auto;
             display: block;
         }
+        h1 {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
