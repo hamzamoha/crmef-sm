@@ -18,7 +18,7 @@
     </style>
 </head>
 <body>
-    <img class="logo" src="http://crmefsm.ac.ma/wp-content/uploads/2016/07/logo_crmef_sm.png" alt="CRMEF SM">
+    <img class="logo" src="logo_crmef_sm.png" alt="CRMEF SM">
     <h1>
         Filiére Informatique
     </h1>
