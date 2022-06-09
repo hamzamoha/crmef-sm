@@ -21,6 +21,51 @@ a {
 	transition: all .25s;
 }
 
+input[type='button'], input[type='submit'], input[type='reset'] {
+	line-height: 40px;
+	height: 44px;
+	padding: 0 30px;
+	font-family: inherit;
+	border: 0;
+	border-radius: 3px;
+	font-size: 1em;
+	font-weight: bold;
+	transition: all .15s ease-in-out;
+	cursor: pointer;
+}
+
+input[type='submit'] {
+	background-color: #fac60b;
+	color: #002046;
+}
+
+input[type='submit']:hover {
+	background-color: #ffda54;
+	color: #002d64;
+}
+
+input[type='button'], input[type='reset'] {
+	background-color: #cfcfcf;
+	color: #282828;
+}
+
+input[type='button']:hover, input[type='reset']:hover {
+	background-color: #e2e2e2;
+	color: #444;
+}
+
+input {
+	outline: none;
+}
+
+input:active {
+	box-shadow: inset 0 0 2px 1px #002046;
+}
+
+.align-center {
+	text-align: center;
+}
+
 .my-1 {
 	margin-top: .25em !important;
 	margin-bottom: .25em !important;
@@ -407,6 +452,13 @@ footer .footer-dummy a {
 	float: left;
 	padding: 0 10px;
 	white-space: nowrap;
+	text-align: center;
+}
+
+.input-group label.icon {
+	padding: 0;
+	width: 40px;
+	overflow: hidden;
 }
 
 .input-group input {

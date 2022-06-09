@@ -14,5 +14,6 @@
             </ul>
         </li>
         <li class="right-item"><a href="/login.php">Sign In</a></li>
+        <li class="right-item"><a href="/dashboard.php">Dashboard</a></li>
     </ul>
 </nav>
