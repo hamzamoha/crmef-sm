@@ -6,7 +6,7 @@ abstract class Table
 {
     private static $table;
 
-    public function insert(array $dataArray)
+    public static function insert(array $dataArray): bool
     {
         $columnsArray = array_values($dataArray);
         $columns = implode(", ", $columnsArray);
@@ -17,16 +17,31 @@ abstract class Table
             $valuesArray[$key] = "'$value'";
         }
         $values = implode(", ", $valuesArray);
-        return Database::insert($this->table, $columns, $values);
+        return Database::insert(get_called_class()::$table, $columns, $values);
     }
 
-    public function select($condition, $orderby)
+    public static function select(string $condition = "TRUE", string $orderby = "1", string $sort = "DESC"): array|false
     {
-        return Database::select($this->table, $condition, $orderby);
+        return Database::select(get_called_class()::$table, $condition, $orderby, $sort);
     }
 
-    public static function get($id)
+    public static function get(int $id): Row|false
     {
         return Database::select_by_id(get_called_class()::$table, $id);
+    }
+
+    public static function update(int $id, array $dataArray, string $condition = "FALSE"): bool
+    {
+        return Database::update(get_called_class()::$table, $dataArray, $condition);
+    }
+
+    public static function count(string $condition = "TRUE"): array|false
+    {
+        return Database::count(get_called_class()::$table, $condition);
+    }
+
+    public static function truncate(): bool
+    {
+        return Database::truncate(get_called_class()::$table);
     }
 }

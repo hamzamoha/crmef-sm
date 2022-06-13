@@ -15,7 +15,7 @@
 
 <body>
     <header class="header">
-        <?php include('navbar.php');?>
+        <?php include(__DIR__ . '/navbar.php'); ?>
         <div class="wall">
             <div>
                 <h1>Welcome</h1>

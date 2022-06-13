@@ -14,7 +14,7 @@ class Database
         return new mysqli(DATABASE_HOST, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
     }
 
-    public static function select($table, $condition = "TRUE", $orderby = "1", $sort = "DESC")
+    public static function select(string $table, string $condition = "TRUE", string $orderby = "1", string $sort = "DESC"): array|false
     {
         // Build Query
         $query = "SELECT * FROM $table WHERE $condition ORDER BY $orderby $sort";
@@ -40,7 +40,7 @@ class Database
         return $data;
     }
 
-    public static function insert($table, $columns, $data)
+    public static function insert(string $table, string $columns, string $data): bool
     {
         // Build Query
         $query = "INSERT INTO $table($columns) VALUES ($data)";
@@ -58,7 +58,7 @@ class Database
         return true;
     }
 
-    public static function select_by_id($table, $id)
+    public static function select_by_id(string $table, int $id): Row|false
     {
         // Build Query
         $query = "SELECT * FROM $table WHERE id=$id";
@@ -83,7 +83,7 @@ class Database
         return $row;
     }
 
-    public static function delete($table, $condition = "FALSE")
+    public static function delete(string $table, string $condition = "FALSE"): bool
     {
         // Build Query
         $query = "DELETE FROM $table WHERE $condition";
@@ -101,12 +101,12 @@ class Database
         return true;
     }
 
-    public static function delete_by_id($table, $id)
+    public static function delete_by_id(string $table, int $id): bool
     {
         return get_called_class()::delete($table, "id=$id");
     }
 
-    public static function update($table, array $dataArray, $condition = "FALSE")
+    public static function update(string $table, array $dataArray, string $condition = "FALSE"): bool
     {
         // Build the SET
         $str = "";
@@ -131,7 +131,7 @@ class Database
         return true;
     }
 
-    public static function truncate($table)
+    public static function truncate(string $table): bool
     {
          // Build Query
          $query = "TRUNCATE $table";
@@ -149,7 +149,7 @@ class Database
          return true;
     }
 
-    public function paginate($table, $condition = "TRUE", $orderby = "1", $sort = "DESC", int $perpage = 20, int $page = 1)
+    public static function paginate($table, $condition = "TRUE", $orderby = "1", $sort = "DESC", int $perpage = 20, int $page = 1): array|false
     {
         // Build Query
         if($page <= 0) $page = 1;
@@ -176,5 +176,28 @@ class Database
         }
 
         return $data;
+    }
+
+    public static function count(string $table, $condition = "TRUE"): array|false
+    {
+        // Build Query
+        $query = "SELECT COUNT(*) AS count FROM $table";
+
+        // MySQL Connect
+        $db = get_called_class()::connect();
+
+        // Get Result
+        if (!($res = $db->query($query)))
+            return false;
+
+        // Close MySQL Connection
+        $db->close();
+
+        // Return Result
+        $row = $res->fetch_object();
+        return array(
+            "table" => $table,
+            "count" => $row->count
+        );
     }
 }

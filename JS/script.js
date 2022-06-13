@@ -1,14 +1,11 @@
-$(document).ready(function () {
-    $('.nav > ul > li').mouseenter(function () {
-        $(this).find('ul').slideDown(350);
-    });
-    $('.nav > ul > li').mouseleave(function () {
-        $(this).find('ul').slideUp(250);
-    });
-    $('.thumbnail').mouseenter(function () {
-        $(this).find('.thumbnail-overlay').slideDown(200);
-    });
-    $('.thumbnail').mouseleave(function () {
-        $(this).find('.thumbnail-overlay').slideUp(200);
-    });
-});
+// $(document).ready(function () {
+//     $('.nav > ul > li a, .nav > ul > li img').click(function () {
+//         $(this).next('ul').slideToggle();
+//     });
+//     $('.thumbnail').mouseenter(function () {
+//         $(this).find('.thumbnail-overlay').slideDown(200);
+//     });
+//     $('.thumbnail .thumbnail-overlay').mouseleave(function () {
+//         $(this).slideUp(200);
+//     });
+// });
