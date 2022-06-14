@@ -44,4 +44,9 @@ abstract class Table
     {
         return Database::truncate(get_called_class()::$table);
     }
+
+    public static function delete(string $condition = "FALSE")
+    {
+        return Database::delete(get_called_class()::$table, $condition);
+    }
 }

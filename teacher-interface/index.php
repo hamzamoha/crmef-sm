@@ -4,6 +4,7 @@ function is_logged_in()
     return true;
 }
 require_once(__DIR__ . "/../student-interface/Includes/Models/Tests.php");
+require_once(__DIR__ . "/../student-interface/Includes/Models/Questions.php");
 if (isset($_POST['add-test'])) {
     Tests::insert([
         "title" => $_POST['title'],
@@ -16,6 +17,30 @@ if (isset($_POST['modify-test'])) {
         "description" => $_POST['description']
     ]);
 }
+if (isset($_POST['delete-tests'])) {
+    $ids = $_POST['tests-ids'];
+    Tests::delete("id in ($ids)");
+}
+if (isset($_POST['delete-all-tests'])) {
+    Tests::truncate();
+}
+if (isset($_POST['add-question'])) {
+    $test_id = $_POST['test-id'];
+    $question = base64_decode($_POST['question']);
+    $s = Questions::insert([
+        "test_id" => $test_id,
+        "question" => $question,
+        "score" => 1
+    ]);
+    if ($s) {
+        echo json_encode([
+            "test_id" => $test_id,
+            "question" => $question,
+            "score" => 1
+        ]);
+        die();
+    }
+}
 $tests = Tests::select();
 ?>
 <!DOCTYPE html>
@@ -26,6 +51,7 @@ $tests = Tests::select();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/FontAwesome6/css/all.min.css">
     <link rel="stylesheet" href="/style/style.css">
     <script src="/script/jquery.min.js"></script>
     <script src="/script/script.js"></script>
@@ -49,6 +75,7 @@ $tests = Tests::select();
                     <h1>Tests</h1>
                     <div class="crud-buttons">
                         <button class="btn-green" id="add-test">Add</button>
+                        <button class="btn-purple" id="edit-questions-test" disabled>Edit Questions</button>
                         <button class="btn-yellow" id="modify-test" disabled>Modify</button>
                         <button class="btn-red" id="delete-test" disabled>Delete</button>
                         <button class="btn-blue" id="select-all-tests">Select All</button>
@@ -82,76 +109,102 @@ $tests = Tests::select();
                             ?>
                         </tbody>
                     </table>
+                    <div class="prompt" style="display: none;" id="add-test-prompt">
+                        <form method="POST" autocomplete="off">
+                            <div class="form-title">
+                                <h2>Add a Test</h2>
+                            </div>
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" name="title" id="title" placeholder="Title">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" name="description" id="description" placeholder="Description">
+                            </div>
+                            <div class="form-group text-center">
+                                <input type="button" name="cancel" id="cancel" value="Cancel">
+                                <input type="reset" name="reset" id="reset" value="Reset">
+                                <input type="submit" name="add-test" id="add-test" value="Add" class="btn-green">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="prompt" style="display: none;" id="modify-test-prompt">
+                        <form method="POST" autocomplete="off">
+                            <div class="form-title">
+                                <h2>Modify a Test</h2>
+                            </div>
+                            <div class="from-group">
+                                <h4>Date: <span id="test-date"></span></h4>
+                            </div>
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" name="title" id="title" placeholder="Title">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input type="text" name="description" id="description" placeholder="Description">
+                            </div>
+                            <div class="form-group text-center">
+                                <input type="hidden" name="id" id="id" value="">
+                                <input type="button" name="cancel" id="cancel" value="Cancel">
+                                <input type="submit" name="modify-test" id="modify-test" value="Modify" class="btn-green">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="prompt" style="display: none;" id="delete-tests-prompt">
+                        <form method="POST" autocomplete="off">
+                            <div class="form-title">
+                                <h2>You Sure You Wanna Delete <span id="tests-count"></span></h2>
+                            </div>
+                            <h4>There's no comming back !!</h4>
+                            <div class="form-group text-center">
+                                <input type="hidden" value="" name="tests-ids" id="tests-ids">
+                                <input type="button" name="cancel" id="cancel" value="Cancel">
+                                <input type="submit" name="delete-tests" id="delete-tests" value="Delete" class="btn-red">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="prompt" style="display: none;" id="delete-all-tests-prompt">
+                        <form method="POST" autocomplete="off">
+                            <div class="form-title">
+                                <h2>You Sure You Wanna Delete <span class="color-red">All Tests</span> ?</h2>
+                            </div>
+                            <h4>There's no comming back !!</h4>
+                            <div class="form-group text-center">
+                                <input type="button" name="cancel" id="cancel" value="Cancel">
+                                <input type="submit" name="delete-all-tests" id="delete-all-tests" value="Delete" class="btn-red">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="prompt" style="display: none;" id="questions-test-prompt">
+                        <div class="test-questions">
+                            <div class="questions-buttons">
+                                <button id="close-questions" class="icon-button"><i class="fa-solid fa-x"></i></button>
+                                <button id="zoom-questions" class="icon-button"><i class="fa-regular fa-window-maximize"></i></button>
+                            </div>
+                            <div class="questions-list">
+                                <div class="new-question">
+                                    <form method="POST" autocomplete="off" name="new-question-form">
+                                        <input type="hidden" name="test-id" id="test-id" value="">
+                                        <input type="text" name="question" id="question" placeholder="Type your question here ...">
+                                        <div class="dir-rtl">
+                                            <input class="btn-green" type="submit" value="Add Question" name="add-question" id="add-question">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="question-item">
+                                    <h4 class="question-statement">Question1</h4>
+                                    <h5 class="question-option"><input type="checkbox" name="question1" id="resp1"> Resp 1</h5>
+                                    <h5 class="question-option"><input type="checkbox" name="question1" id="resp2"> Resp 2</h5>
+                                    <h5 class="question-option"><input type="checkbox" name="question1" id="resp3"> Resp 3</h5>
+                                    <h5 class="question-option"><input type="checkbox" name="question1" id="resp4"> Resp 4</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="prompt" style="display: none;" id="add-test-prompt">
-            <form method="POST">
-                <div class="form-title">
-                    <h2>Add a Test</h2>
-                </div>
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" name="title" id="title" placeholder="Title">
-                </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input type="text" name="description" id="description" placeholder="Description">
-                </div>
-                <div class="form-group text-center">
-                    <input type="button" name="cancel" id="cancel" value="Cancel">
-                    <input type="reset" name="reset" id="reset" value="Reset">
-                    <input type="submit" name="add-test" id="add-test" value="Add" class="btn-green">
-                </div>
-            </form>
-        </div>
-        <div class="prompt" style="display: none;" id="modify-test-prompt">
-            <form method="POST" autocomplete="off">
-                <div class="form-title">
-                    <h2>Modify a Test</h2>
-                </div>
-                <div class="from-group">
-                    <h4>Date: <span id="test-date"></span></h4>
-                </div>
-                <div class="form-group">
-                    <label for="title">Title</label>
-                    <input type="text" name="title" id="title" placeholder="Title">
-                </div>
-                <div class="form-group">
-                    <label for="description">Description</label>
-                    <input type="text" name="description" id="description" placeholder="Description">
-                </div>
-                <div class="form-group text-center">
-                    <input type="hidden" name="id" id="id" value="">
-                    <input type="button" name="cancel" id="cancel" value="Cancel">
-                    <input type="submit" name="modify-test" id="modify-test" value="Modify" class="btn-green">
-                </div>
-            </form>
-        </div>
-        <div class="prompt" style="display: none;" id="delete-tests-prompt">
-            <form method="POST">
-                <div class="form-title">
-                    <h2>You Sure You Wanna Delete <span id="tests-count"></span></h2>
-                </div>
-                <h4>There's no comming back !!</h4>
-                <div class="form-group text-center">
-                    <input type="hidden" value="" name="tests-ids" id="tests-ids">
-                    <input type="button" name="cancel" id="cancel" value="Cancel">
-                    <input type="submit" name="delete-tests" id="delete-tests" value="Delete" class="btn-red">
-                </div>
-            </form>
-        </div>
-        <div class="prompt" style="display: none;" id="delete-all-tests-prompt">
-            <form method="POST">
-                <div class="form-title">
-                    <h2>You Sure You Wanna Delete <span class="color-red">All Tests</span> ?</h2>
-                </div>
-                <h4>There's no comming back !!</h4>
-                <div class="form-group text-center">
-                    <input type="button" name="cancel" id="cancel" value="Cancel">
-                    <input type="submit" name="delete-all-tests" id="delete-all-tests" value="Delete" class="btn-red">
-                </div>
-            </form>
         </div>
     <?php
     } else {

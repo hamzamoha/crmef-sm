@@ -8,11 +8,26 @@ $(document).ready(function () {
     $(".prompt form input[type=button][name=cancel]#cancel, .prompt").click(function () {
         $(this).closest(".prompt").hide();
     });
-    $(".prompt form").click(function (e) {
+    $(".prompt > *").click(function (e) {
         e.stopPropagation();
+    });
+    $(document).keydown(function (e) {
+        if (e.which == 27) {
+            $(".prompt").hide();
+        }
     });
     $(".tests .crud-buttons #add-test").click(function () {
         $(".prompt#add-test-prompt").show();
+    });
+    $(".tests .crud-buttons #edit-questions-test").click(async function () {
+        test_id = 0;
+        checkedCount = await $(".tests .crud-table input[type='checkbox'][name='select-test']:checked").each(async function () {
+            test_id = $(this).attr("id");
+        }).length;
+        if (checkedCount != 1 || test_id == 0) return;
+        $(".prompt#questions-test-prompt form input[type='hidden'][name='test-id']#test-id").val(test_id);
+        //get questions
+        $(".prompt#questions-test-prompt").show();
     });
     $(".tests .crud-buttons #delete-all-tests").click(function () {
         $(".prompt#delete-all-tests-prompt").show();
@@ -25,7 +40,7 @@ $(document).ready(function () {
             test.title = $(this).closest("tr").find("td:nth-child(4)").text();
             test.description = $(this).closest("tr").find("td:nth-child(5)").text();
         }).length;
-        if(checkedCount != 1 || test.id <= 0) return;
+        if (checkedCount != 1 || test.id <= 0) return;
         await $(".prompt#modify-test-prompt").each(async function () {
             $(this).find("input#id").val(test.id);
             $(this).find("input#title").val(test.title);
@@ -50,9 +65,9 @@ $(document).ready(function () {
         checkCount = $(".tests .crud-table input[type='checkbox'][name='select-test']").length;
         checkedCount = $(".tests .crud-table input[type='checkbox'][name='select-test']:checked").length;
         if (checkedCount == 1)
-            $(".tests .crud-buttons #modify-test").removeAttr("disabled");
+            $(".tests .crud-buttons #modify-test, .tests .crud-buttons #edit-questions-test").removeAttr("disabled");
         else
-            $(".tests .crud-buttons #modify-test").attr("disabled", "disabled");
+            $(".tests .crud-buttons #modify-test, .tests .crud-buttons #edit-questions-test").attr("disabled", "disabled");
         if (checkCount == checkedCount) {
             $(".tests .crud-buttons #select-all-tests").attr("disabled", "disabled");
         }
@@ -85,5 +100,32 @@ $(document).ready(function () {
         })
     }).find("input[type='checkbox'][name='select-test']").click(function (e) {
         e.stopPropagation();
+    });
+    $(".test-questions .icon-button#close-questions").click(function () {
+        $(this).closest(".prompt").hide();
+    })
+    $(".test-questions").on("click", ".icon-button#zoom-questions", function () {
+        $(this).closest(".test-questions").css({ "height": "100%", "width": "1200px" });
+        $(this).html(`<i class="fa-regular fa-window-restore"></i>`);
+        $(this).attr('id', 'restore-questions')
+    });
+    $(".test-questions").on("click", ".icon-button#restore-questions", function () {
+        $(this).closest(".test-questions").removeAttr("style");
+        $(this).html(`<i class="fa-regular fa-window-maximize"></i>`);
+        $(this).attr('id', 'zoom-questions')
+    });
+    $(document).on("submit", "form[name='new-question-form']", function () {
+        test_id = $(this).find("input[name='test-id']#test-id").val();
+        $.post("?", {
+            "add-question": 'add_question',
+            "test-id": test_id,
+            question: btoa($(this).find("input[name='question']#question").val())
+        },
+            function (data, textStatus, jqXHR) {
+                console.log(data, textStatus, jqXHR);
+            },
+            "json"
+        );
+        return false;
     });
 });
