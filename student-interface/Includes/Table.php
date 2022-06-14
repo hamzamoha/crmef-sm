@@ -8,7 +8,7 @@ abstract class Table
 
     public static function insert(array $dataArray): bool
     {
-        $columnsArray = array_values($dataArray);
+        $columnsArray = array_keys($dataArray);
         $columns = implode(", ", $columnsArray);
 
         $valuesArray = array_values($dataArray);
@@ -30,9 +30,9 @@ abstract class Table
         return Database::select_by_id(get_called_class()::$table, $id);
     }
 
-    public static function update(int $id, array $dataArray, string $condition = "FALSE"): bool
+    public static function update(int $id, array $dataArray): bool|Throwable
     {
-        return Database::update(get_called_class()::$table, $dataArray, $condition);
+        return Database::update(get_called_class()::$table, $dataArray, "id='$id'");
     }
 
     public static function count(string $condition = "TRUE"): array|false

@@ -5,7 +5,7 @@ require_once(__DIR__ . "/Row.php");
 const DATABASE_HOST = "127.0.0.1";
 const DATABASE_USERNAME = "root";
 const DATABASE_PASSWORD = "";
-const DATABASE_NAME = "test";
+const DATABASE_NAME = "class_db";
 
 class Database
 {
@@ -106,17 +106,40 @@ class Database
         return get_called_class()::delete($table, "id=$id");
     }
 
-    public static function update(string $table, array $dataArray, string $condition = "FALSE"): bool
+    public static function update(string $table, array $dataArray, string $condition = "FALSE"): bool|Throwable
     {
-        // Build the SET
-        $str = "";
-        foreach($dataArray as $column=>$value){
-            $value = addslashes($value);
-            $str .= "$column='$value'";
-        }
+        try {
+            //code...
+            // Build the SET
+            $str = "";
+            foreach ($dataArray as $column => $value) {
+                $value = addslashes($value);
+                $str .= "$column='$value',";
+            }
+            $str = rtrim($str, ",");
+            // Build Query
+            $query = "UPDATE $table SET $str WHERE $condition";
 
+            // MySQL Connect
+            $db = get_called_class()::connect();
+
+            // Get Result
+            if (!($res = $db->query($query)))
+                return false;
+
+            // Close MySQL Connection
+            $db->close();
+
+            return true;
+        } catch (Throwable $th) {
+            return $th;
+        }
+    }
+
+    public static function truncate(string $table): bool
+    {
         // Build Query
-        $query = "UPDATE $table SET $str WHERE $condition";
+        $query = "TRUNCATE $table";
 
         // MySQL Connect
         $db = get_called_class()::connect();
@@ -131,30 +154,12 @@ class Database
         return true;
     }
 
-    public static function truncate(string $table): bool
-    {
-         // Build Query
-         $query = "TRUNCATE $table";
-
-         // MySQL Connect
-         $db = get_called_class()::connect();
- 
-         // Get Result
-         if (!($res = $db->query($query)))
-             return false;
- 
-         // Close MySQL Connection
-         $db->close();
- 
-         return true;
-    }
-
     public static function paginate($table, $condition = "TRUE", $orderby = "1", $sort = "DESC", int $perpage = 20, int $page = 1): array|false
     {
         // Build Query
-        if($page <= 0) $page = 1;
-        if($perpage < 0) $perpage = 20;
-        $start = ($page - 1)*$perpage;
+        if ($page <= 0) $page = 1;
+        if ($perpage < 0) $perpage = 20;
+        $start = ($page - 1) * $perpage;
         $query = "SELECT * FROM $table WHERE $condition ORDER BY $orderby $sort LIMIT $start,$perpage";
 
         // MySQL Connect
