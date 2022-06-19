@@ -1,8 +1,8 @@
 <?php
-require_once(__DIR__ . "/../student-interface/Includes/Models/Tests.php");
-require_once(__DIR__ . "/../student-interface/Includes/Models/Courses.php");
-require_once(__DIR__ . "/../student-interface/Includes/Functions.php");
-require_once(__DIR__ . "/../student-interface/Includes/Models/Questions.php");
+require_once(__DIR__ . "/../Includes/Models/Tests.php");
+require_once(__DIR__ . "/../Includes/Models/Courses.php");
+require_once(__DIR__ . "/../Includes/Functions.php");
+require_once(__DIR__ . "/../Includes/Models/Questions.php");
 if (isset($_POST['add-test'])) {
     Tests::insert([
         "title" => $_POST['title'],
@@ -46,9 +46,9 @@ $courses = Courses::select();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/FontAwesome6/css/all.min.css">
-    <link rel="stylesheet" href="/style/style.css">
-    <script src="/script/jquery.min.js"></script>
-    <script src="/script/script.js"></script>
+    <link rel="stylesheet" href="/admin/style/style.css">
+    <script src="/admin/script/jquery.min.js"></script>
+    <script src="/admin/script/script.js"></script>
 </head>
 
 <body>

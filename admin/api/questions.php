@@ -1,8 +1,8 @@
 <?php
 
-require_once(__DIR__ . "/../../student-interface/Includes/Models/Questions.php");
-require_once(__DIR__ . "/../../student-interface/Includes/Models/Options.php");
-require_once(__DIR__ . "/../../student-interface/Includes/Functions.php");
+require_once(__DIR__ . "/../../Includes/Models/Questions.php");
+require_once(__DIR__ . "/../../Includes/Models/Options.php");
+require_once(__DIR__ . "/../../Includes/Functions.php");
 
 if (isset($_POST['action']) && $_POST['action'] == "get") {
     $test_id = intval($_POST['test_id']);
