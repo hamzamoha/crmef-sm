@@ -1,17 +1,17 @@
 @font-face {
     font-family: "Garet";
-    src: url("/fonts/Garet-Book.ttf");
+    src: url("/admin/fonts/Garet-Book.ttf");
 }
 
 @font-face {
     font-family: "Garet";
-    src: url("/fonts/Garet-Book.ttf");
+    src: url("/admin/fonts/Garet-Book.ttf");
     font-weight: bolder;
 }
 
 @font-face {
     font-family: "ModernSans";
-    src: url("/fonts/ModernSans-Light.otf");
+    src: url("/admin/fonts/ModernSans-Light.otf");
 }
 
 * {

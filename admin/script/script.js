@@ -67,7 +67,7 @@ $(document).ready(function () {
         }).length;
         if (checkedCount != 1 || test_id == 0) return;
         $(".prompt#questions-test-prompt form input[type='hidden'][name='test-id']#test-id").val(test_id);
-        $.post("/api/questions.php", {
+        $.post("/admin/api/questions.php", {
             "action": "get",
             "test_id": test_id
         },
@@ -104,7 +104,7 @@ $(document).ready(function () {
         this_ref = this
         statement = $(this).val();
         id = $(this).closest(".question-item").attr("id")
-        $.post("/api/questions.php", {
+        $.post("/admin/api/questions.php", {
             action: "update",
             id: id,
             statement: statement
@@ -127,7 +127,7 @@ $(document).ready(function () {
         $(this).val(score);
         console.log(score);
         id = $(this).closest(".question-item").attr("id")
-        $.post("/api/questions.php", {
+        $.post("/admin/api/questions.php", {
             action: "update",
             id: id,
             score: score
@@ -146,7 +146,7 @@ $(document).ready(function () {
         if ($action == "add-option") {
             question_id = $(this).closest(".question-item").attr("id");
             phrase = "option1";
-            $.post("/api/options.php", {
+            $.post("/admin/api/options.php", {
                 action: "create",
                 question_id: question_id,
                 phrase: phrase,
@@ -161,7 +161,7 @@ $(document).ready(function () {
         }
         else if ($action == "delete-question") {
             id = $(this).closest(".question-item").attr("id");
-            $.post("/api/questions.php", {
+            $.post("/admin/api/questions.php", {
                 action: "delete",
                 id: id,
             },
@@ -179,7 +179,7 @@ $(document).ready(function () {
         this_ref = this;
         correct = $(this).is(":checked") ? 1 : 0;
         id = $(this).closest(".question-option").find("input[type='checkbox']").attr("id");
-        $.post("/api/options.php", {
+        $.post("/admin/api/options.php", {
             action: "update",
             correct: correct,
             id: id
@@ -200,7 +200,7 @@ $(document).ready(function () {
         this_ref = this;
         phrase = $(this).val();
         id = $(this).closest(".question-option").find("input[type='checkbox']").attr("id");
-        $.post("/api/options.php", {
+        $.post("/admin/api/options.php", {
             action: "update",
             phrase: phrase,
             id: id
@@ -217,7 +217,7 @@ $(document).ready(function () {
     $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("click", ".options .question-option button.delete-option", function () {
         this_ref = this
         id = $(this).closest(".question-option").find("input[type='checkbox']").attr("id");
-        $.post("/api/options.php", {
+        $.post("/admin/api/options.php", {
             action: "delete",
             id: id
         },
@@ -294,7 +294,7 @@ $(document).ready(function () {
             this.checked = false;
         }).trigger("change");
     });
-    $(".tests .crud-table tr").click(function () {
+    $(".tests .crud-table tbody tr").click(function () {
         $(this).find("input[type='checkbox'][name='select-test']").each(function () {
             this.checked = !this.checked;
             $(this).trigger("change");
@@ -357,7 +357,7 @@ $(document).ready(function () {
         e.preventDefault();
         let data = new FormData(this);
         data.append("_method", "create");
-        fetch("/api/courses.php", {
+        fetch("/admin/api/courses.php", {
             method: "POST",
             body: data
         })
@@ -365,7 +365,7 @@ $(document).ready(function () {
             .then(course => {
                 count = $(".courses .crud-table tbody tr").length + 1;
                 $(".courses .crud-table tbody").append(`
-                <tr>
+                <tr id="${course.id}">
                     <td>${count}</td>
                     <td>${course.title}</td>
                     <td>${course.description}</td>
@@ -380,25 +380,62 @@ $(document).ready(function () {
     /**
      * 
      * Course Image Preview
+     * Course File Preview
      * 
      */
 
-    $(".courses .prompt#new-course form .image-input input[type='file'][name='image']").change(function (e) {
+    $(".courses .prompt#new-course form .image-input input[type='file'][name='image']").change(() => {
         $(".course-image-preview").html("")
         let image = this.files[0];
         if (image) {
-            if(image.type.match(/^image\/.*$/)) $(".course-image-preview").append(image_DOM(URL.createObjectURL(image), "Image Preview"));
+            if (image.type.match(/^image\/.*$/)) $(".course-image-preview").append(image_DOM(URL.createObjectURL(image), "Image Preview"));
             else notification("error", "The file should be an image");
         }
     });
 
-    $(".courses .prompt#new-course form .file-input input[type='file'][name='file']").change(function (e) {
+    $(".courses .prompt#new-course form .file-input input[type='file'][name='file']").change(() => {
         console.log("Changed !");
         let pdf = this.files[0];
         if (pdf) {
-            if(pdf.type == "application/pdf") $(this).attr("data-message", pdf.name);
+            if (pdf.type == "application/pdf") $(this).attr("data-message", pdf.name);
             else notification("error", "The file should be of type pdf");
         }
         else $(this).removeAttr("data-message");
     });
+
+    /**
+     * 
+     * Course click update
+     * Course update
+     * Course edit
+     * Course modify
+     * 
+     */
+
+    $(".courses .crud-table tbody").on("click", "tr", () => {
+        data = {
+            _method: "get",
+            id: $(this).attr("id")
+        }
+        fetch("/admin/api/courses.php", {
+            method: "POST",
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
+        })
+            .then(data => data.json())
+            .then(course => {
+                $(".courses .prompt#update-course .course-image-preview").append(image_DOM(`/course/images/${course.image}`, course.title));
+                $(".courses .prompt#update-course form")[0].title.value = course.title;
+                $(".courses .prompt#update-course form")[0].description.value = course.description;
+                $(".courses .prompt#update-course form")[0].file.setAttribute("data-message", course.file);
+            })
+            .then(() => {
+                $(".courses .prompt#update-course").show();
+            })
+            .catch(e => console.log(e));
+    })
+
 });
