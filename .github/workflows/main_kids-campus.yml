@@ -56,5 +56,5 @@ jobs:
         with:
           app-name: 'kids-campus'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_E95A0B8E86FE40A7BD1ED7A3F8F9406B }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D9E3927858F743ECAE277FA151CFF6AC }}
           package: .
