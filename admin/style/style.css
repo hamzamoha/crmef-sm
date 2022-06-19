@@ -324,11 +324,13 @@ button:hover:not(:disabled) {
     font-size: 8em;
 }
 
-.dashboard .dashboard-content .tests {
+.dashboard .dashboard-content .tests,
+.dashboard .dashboard-content .courses {
     padding: 50px;
 }
 
-.dashboard .dashboard-content .tests>h1 {
+.dashboard .dashboard-content .tests>h1,
+.dashboard .dashboard-content .courses>h1 {
     font-size: 3em;
     font-weight: normal;
     margin-bottom: 15px;
@@ -341,6 +343,11 @@ button:hover:not(:disabled) {
     background: #fff;
     border-radius: 4px;
     overflow: hidden;
+}
+
+.crud-table.crud-style-1 thead {
+    background-color: #f69575;
+    color: #fff;
 }
 
 .crud-table thead {
@@ -377,7 +384,7 @@ button:hover:not(:disabled) {
     justify-content: center;
     align-items: center;
     background-image: radial-gradient(rgba(0, 0, 0, .9), transparent);
-    
+
 }
 
 .prompt form {
@@ -440,7 +447,21 @@ button:hover:not(:disabled) {
 .test-questions .questions-list {
     overflow-y: auto;
     width: 100%;
-    padding: 50px;
+    padding: 30px;
+}
+
+.test-questions .questions-list .test-header {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.test-questions .questions-list .test-header .test-date {
+    font-size: .8em;
+    padding: 5px;
+    background: #e5e5e5;
+    display: inline-block;
+    margin: 4px 0;
+    border-radius: 4px;
 }
 
 .test-questions form {
@@ -449,7 +470,7 @@ button:hover:not(:disabled) {
 }
 
 .test-questions .new-question {
-    border-bottom: solid #253c2f 1px;   
+    border-bottom: solid #253c2f 1px;
     padding-bottom: 20px;
     margin-bottom: 20px;
 }
@@ -466,6 +487,7 @@ button:hover:not(:disabled) {
     text-align: center;
     font-size: 1.4em;
 }
+
 .test-questions .icon-button:hover {
     background-color: #253c2f;
     color: #eee;
@@ -475,6 +497,7 @@ button:hover:not(:disabled) {
     padding: 10px;
     border-bottom: solid 1px #999;
 }
+
 .test-questions .questions-list .question-item .question-statement {
     font-size: 1.5em;
     padding: 10px 0;
@@ -517,6 +540,7 @@ button:hover:not(:disabled) {
     background: none;
     border: none;
 }
+
 .question-actions .question-action input[name='question-score'] {
     width: 60px;
     line-height: 30px;
@@ -531,4 +555,75 @@ button:hover:not(:disabled) {
     border-radius: 8px;
     box-shadow: 0 0 0 1px #ddd;
     font-family: inherit;
+}
+
+/**
+ * 
+ * Courses Style
+ * 
+ * */
+
+
+.courses .prompt form {
+    width: 600px;
+    max-height: 100%;
+    overflow-x: auto;
+}
+
+.courses .prompt#new-course form .form-group {
+    margin: 10px 0;
+}
+
+.file-input input[type="file"] {
+    --height: 50px;
+    display: block;
+    width: 100%;
+    height: var(--height);
+    border-radius: 5px;
+    position: relative;
+    overflow: hidden;
+    font-family: inherit;
+    cursor: pointer;
+    background-color: #eee;
+}
+
+.file-input input[type="file"]:after {
+    content: 'Choose a file';
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #eee;
+    line-height: var(--height);
+    text-align: center;
+    color: #333;
+    font-size: 1.3em;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all .15s ease-in-out;
+}
+
+.file-input input[type="file"][data-message]:after {
+    content: attr(data-message);
+}
+
+.file-input input[type="file"]:hover:after {
+    background: #e1e1e1;
+}
+
+.image-input input[type="file"] {
+    --height: 60px;
+    background-color: #ff9a7c;
+}
+
+.image-input input[type="file"]:after {
+    content: 'Image';
+    background: #ff9a7c;
+    color: #fff;
+}
+
+.image-input input[type="file"]:hover:after {
+    background-color: #ffb6a0;
 }

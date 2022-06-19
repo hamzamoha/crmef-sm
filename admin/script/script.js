@@ -29,6 +29,13 @@ function option_DOM($statement, $question_id, $id, correct) {
 function option_input_DOM($statement) {
     return `<input type="text" name="option-statement" id="option-statement" class="option-statement" value="${$statement}">`;
 }
+function image_DOM(src, alt, title = alt) {
+    return `<img src="${src}" alt="${alt}" title="${title}">`;
+}
+function notification(type = "info", message = "Hello World") {
+    //
+    console.log(`${type}: ${message}`);
+}
 $(document).ready(function () {
     $(".dashboard .dashboard-sidebar .sidebar-link[data-target]").click(function (e) {
         e.preventDefault();
@@ -54,6 +61,9 @@ $(document).ready(function () {
         test_id = 0;
         checkedCount = await $(".tests .crud-table input[type='checkbox'][name='select-test']:checked").each(async function () {
             test_id = $(this).attr("id");
+            date = $(this).closest("tr").find("td:nth-child(3)").text();
+            title = $(this).closest("tr").find("td:nth-child(4)").text();
+            description = $(this).closest("tr").find("td:nth-child(5)").text();
         }).length;
         if (checkedCount != 1 || test_id == 0) return;
         $(".prompt#questions-test-prompt form input[type='hidden'][name='test-id']#test-id").val(test_id);
@@ -64,6 +74,9 @@ $(document).ready(function () {
             async function (data, textStatus, jqXHR) {
                 if (data.type == "error") { }
                 else {
+                    $(".prompt#questions-test-prompt .test-questions .test-header .test-title").html(title);
+                    $(".prompt#questions-test-prompt .test-questions .test-header .test-description").html(description);
+                    $(".prompt#questions-test-prompt .test-questions .test-header .test-date").html(date);
                     $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").html("");
                     await data.forEach(async element => {
                         let options = "";
@@ -78,8 +91,9 @@ $(document).ready(function () {
                 console.log(data);
             },
             "json"
-        );
-        $(".prompt#questions-test-prompt").show();
+        ).done(function () {
+            $(".prompt#questions-test-prompt").show();
+        });
     });
     $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("click", ".question-item h4.question-statement", async function () {
         await $(this).replaceWith(`<input type="text" id="question-statement" class="question-statement" name="question-statement" value="${$(this).text()}">`);
@@ -320,5 +334,71 @@ $(document).ready(function () {
             "json"
         );
         return false;
+    });
+
+    /**
+     * Courses Part
+     * started: 19 Juin 2022, 12:08 AM
+     */
+
+    $(".courses .crud-buttons #add-course").click(function () {
+        $(".courses .prompt#new-course").show();
+    });
+
+    /**
+     * 
+     * New Course Submit
+     * Create Course
+     * Add Course
+     * 
+     * */
+
+    $(".courses .prompt#new-course form").submit(function (e) {
+        e.preventDefault();
+        let data = new FormData(this);
+        data.append("_method", "create");
+        fetch("/api/courses.php", {
+            method: "POST",
+            body: data
+        })
+            .then(data => data.json())
+            .then(course => {
+                count = $(".courses .crud-table tbody tr").length + 1;
+                $(".courses .crud-table tbody").append(`
+                <tr>
+                    <td>${count}</td>
+                    <td>${course.title}</td>
+                    <td>${course.description}</td>
+                    <td><img src=""></td>
+                    <td>${course.description}</td>
+                </tr>`)
+            })
+            .catch(e => console.log("Error: ", e))
+        return false;
+    });
+
+    /**
+     * 
+     * Course Image Preview
+     * 
+     */
+
+    $(".courses .prompt#new-course form .image-input input[type='file'][name='image']").change(function (e) {
+        $(".course-image-preview").html("")
+        let image = this.files[0];
+        if (image) {
+            if(image.type.match(/^image\/.*$/)) $(".course-image-preview").append(image_DOM(URL.createObjectURL(image), "Image Preview"));
+            else notification("error", "The file should be an image");
+        }
+    });
+
+    $(".courses .prompt#new-course form .file-input input[type='file'][name='file']").change(function (e) {
+        console.log("Changed !");
+        let pdf = this.files[0];
+        if (pdf) {
+            if(pdf.type == "application/pdf") $(this).attr("data-message", pdf.name);
+            else notification("error", "The file should be of type pdf");
+        }
+        else $(this).removeAttr("data-message");
     });
 });

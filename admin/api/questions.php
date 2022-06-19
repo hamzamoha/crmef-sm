@@ -32,5 +32,18 @@ if (isset($_POST['action']) && $_POST['action'] == "update") {
     if ($question) die(json_encode($question));
     else die(message("error", "Question not found !"));
 }
+if (isset($_POST['action']) && $_POST['action'] == "delete") {
+    $question_id = intval($_POST['id']);
+
+    $question = Questions::get($question_id);
+
+    if ($question) {
+        $s = $question->delete();
+        if ($s) {
+            Options::delete("question_id = $question_id");
+            die(json_encode($question));
+        } else die(message("error", "Erorr While Deleting the question !"));
+    } else die(message("error", "Question not found !"));
+}
 
 header("location: http://" . $_SERVER['HTTP_HOST'] . "/");
