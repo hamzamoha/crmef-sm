@@ -6,7 +6,7 @@ abstract class Table
 {
     private static $table;
 
-    public static function insert(array $dataArray): bool
+    public static function insert(array $dataArray): false|Row
     {
         $columnsArray = array_keys($dataArray);
         $columns = implode(", ", $columnsArray);
@@ -17,7 +17,9 @@ abstract class Table
             $valuesArray[$key] = "'$value'";
         }
         $values = implode(", ", $valuesArray);
-        return Database::insert(get_called_class()::$table, $columns, $values);
+        $id = Database::insert(get_called_class()::$table, $columns, $values);
+        if($id) return get_called_class()::get($id);
+        else return false;
     }
 
     public static function select(string $condition = "TRUE", string $orderby = "1", string $sort = "DESC"): array|false

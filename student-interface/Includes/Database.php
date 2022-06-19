@@ -40,7 +40,7 @@ class Database
         return $data;
     }
 
-    public static function insert(string $table, string $columns, string $data): bool
+    public static function insert(string $table, string $columns, string $data): bool|int
     {
         // Build Query
         $query = "INSERT INTO $table($columns) VALUES ($data)";
@@ -52,10 +52,13 @@ class Database
         if (!($res = $db->query($query)))
             return false;
 
+        // Get Last Inserted Id
+        $id = $db->insert_id;
+
         // Close MySQL Connection
         $db->close();
 
-        return true;
+        return $id;
     }
 
     public static function select_by_id(string $table, int $id): Row|false
@@ -109,7 +112,6 @@ class Database
     public static function update(string $table, array $dataArray, string $condition = "FALSE"): bool|Throwable
     {
         try {
-            //code...
             // Build the SET
             $str = "";
             foreach ($dataArray as $column => $value) {

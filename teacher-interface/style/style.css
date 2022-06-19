@@ -377,6 +377,7 @@ button:hover:not(:disabled) {
     justify-content: center;
     align-items: center;
     background-image: radial-gradient(rgba(0, 0, 0, .9), transparent);
+    
 }
 
 .prompt form {
@@ -424,6 +425,10 @@ button:hover:not(:disabled) {
     width: 800px;
     max-width: 100%;
     background: #fff;
+    max-height: 100%;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
 }
 
 .test-questions .questions-buttons {
@@ -433,6 +438,7 @@ button:hover:not(:disabled) {
 }
 
 .test-questions .questions-list {
+    overflow-y: auto;
     width: 100%;
     padding: 50px;
 }
@@ -477,4 +483,52 @@ button:hover:not(:disabled) {
 .test-questions .questions-list .question-item .question-option {
     font-size: .9em;
     padding: 2px 0 2px 12px;
+}
+
+.test-questions .questions-list .question-item .question-option button.delete-option {
+    padding: 2px;
+    line-height: 1em;
+    background: none;
+    border: none;
+    margin: 0;
+    margin-right: 3px;
+}
+
+.question-actions {
+    height: 50px;
+    direction: rtl;
+}
+
+.question-actions .question-action {
+    margin: 5px;
+    line-height: 40px;
+    padding: 0;
+    background: none;
+    border: none;
+    display: inline-block;
+    height: 40px;
+    direction: ltr;
+}
+
+.question-actions .question-action button {
+    width: 40px;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+}
+.question-actions .question-action input[name='question-score'] {
+    width: 60px;
+    line-height: 30px;
+    text-indent: 8px;
+    direction: ltr;
+    font-size: 1.2em;
+    height: 30px;
+    margin: 5px 0;
+    display: inline-block;
+    border: 0;
+    background: #eee;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px #ddd;
+    font-family: inherit;
 }

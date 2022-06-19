@@ -1,3 +1,34 @@
+function question_DOM($id, $statement, $score = 1, $options = "") {
+    return `
+    <div class="question-item" id="${$id}">
+        <h4 class="question-statement">${$statement}</h4>
+        <div class="options">
+            ${$options}
+        </div>
+        <div class="question-actions">
+            <div class="question-action">
+                <button data-action="delete-question">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </div>
+            <div class="question-action">
+                <button data-action="add-option">
+                    <i class="fa-regular fa-square-plus"></i>
+                </button>
+            </div>
+            <div class="question-action">
+                Score: <input type='number' min="0" step='1' value="${$score}" name="question-score" id="question-score-${$id}">
+            </div>
+        </div>
+    </div>`;
+}
+function option_DOM($statement, $question_id, $id, correct) {
+    return `
+    <h5 class="question-option"><button class="delete-option"><i class="fa-solid fa-xmark"></i></button><input type="checkbox" data-question-id="${$question_id}" id="${$id}"${correct == 1 ? " checked" : ""}> <span>${$statement}</span></h5>`;
+}
+function option_input_DOM($statement) {
+    return `<input type="text" name="option-statement" id="option-statement" class="option-statement" value="${$statement}">`;
+}
 $(document).ready(function () {
     $(".dashboard .dashboard-sidebar .sidebar-link[data-target]").click(function (e) {
         e.preventDefault();
@@ -26,9 +57,165 @@ $(document).ready(function () {
         }).length;
         if (checkedCount != 1 || test_id == 0) return;
         $(".prompt#questions-test-prompt form input[type='hidden'][name='test-id']#test-id").val(test_id);
-        //get questions
+        $.post("/api/questions.php", {
+            "action": "get",
+            "test_id": test_id
+        },
+            async function (data, textStatus, jqXHR) {
+                if (data.type == "error") { }
+                else {
+                    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").html("");
+                    await data.forEach(async element => {
+                        let options = "";
+                        await element.options.forEach(async option => {
+                            console.log(option);
+                            options += option_DOM(option.phrase, element.statement.id, option.id, option.correct)
+                        });
+                        console.log(element.options.length, Math.random());
+                        $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").append(question_DOM(element.statement.id, element.statement.question, element.statement.score, options));
+                    });
+                }
+                console.log(data);
+            },
+            "json"
+        );
         $(".prompt#questions-test-prompt").show();
     });
+    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("click", ".question-item h4.question-statement", async function () {
+        await $(this).replaceWith(`<input type="text" id="question-statement" class="question-statement" name="question-statement" value="${$(this).text()}">`);
+        await $(this).closest(".question-item input.question-statement").focus();
+        await $(this).closest(".question-item input.question-statement").click();
+    })
+    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("focusout", ".question-item input.question-statement", function () {
+        this_ref = this
+        statement = $(this).val();
+        id = $(this).closest(".question-item").attr("id")
+        $.post("/api/questions.php", {
+            action: "update",
+            id: id,
+            statement: statement
+        },
+            function (data, textStatus, jqXHR) {
+                console.log(data);
+                if (data.type == "error") { }
+                else $(this_ref).replaceWith(`<h4 class="question-statement">${statement}</h4>`);
+            },
+            "json"
+        );
+    });
+    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("change", ".question-item input[name='question-score']", function () {
+        if (isNaN(Number($(this).val()))) score = 1
+        else {
+            num = (Number($(this).val()))
+            if (num < 0) score = 1
+            else score = Math.round(num)
+        }
+        $(this).val(score);
+        console.log(score);
+        id = $(this).closest(".question-item").attr("id")
+        $.post("/api/questions.php", {
+            action: "update",
+            id: id,
+            score: score
+        },
+            function (data, textStatus, jqXHR) {
+                console.log(data);
+                if (data.type == "error") { }
+                else { }
+            },
+            "json"
+        );
+    });
+    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("click", ".question-action button[data-action]", function () {
+        $action = $(this).attr("data-action");
+        this_ref = this
+        if ($action == "add-option") {
+            question_id = $(this).closest(".question-item").attr("id");
+            phrase = "option1";
+            $.post("/api/options.php", {
+                action: "create",
+                question_id: question_id,
+                phrase: phrase,
+                correct: 0
+            },
+                function (data, textStatus, jqXHR) {
+                    if (data.type == "error") { }
+                    else $(this_ref).closest(".question-item").find(".options").append(option_DOM(phrase, question_id, data.id, 0));
+                },
+                "json"
+            );
+        }
+        else if ($action == "delete-question") {
+            id = $(this).closest(".question-item").attr("id");
+            $.post("/api/questions.php", {
+                action: "delete",
+                id: id,
+            },
+                function (data, textStatus, jqXHR) {
+                    if (data.type == "error") { }
+                    else $(this_ref).closest(".question-item").remove();
+                },
+                "json"
+            );
+        }
+    })
+    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("click", ".options .question-option input[type='checkbox']", function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+        this_ref = this;
+        correct = $(this).is(":checked") ? 1 : 0;
+        id = $(this).closest(".question-option").find("input[type='checkbox']").attr("id");
+        $.post("/api/options.php", {
+            action: "update",
+            correct: correct,
+            id: id
+        },
+            function (data, textStatus, jqXHR) {
+                if (data.type == "error") { }
+                else {
+                    this_ref.checked = !this_ref.checked;
+                }
+            },
+            "json"
+        );
+    });
+    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("click", ".options .question-option > span", function () {
+        $(this).replaceWith(option_input_DOM($(this).text()));
+    });
+    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("focusout", ".options .question-option > input[name='option-statement'].option-statement#option-statement", function () {
+        this_ref = this;
+        phrase = $(this).val();
+        id = $(this).closest(".question-option").find("input[type='checkbox']").attr("id");
+        $.post("/api/options.php", {
+            action: "update",
+            phrase: phrase,
+            id: id
+        },
+            function (data, textStatus, jqXHR) {
+                if (data.type == "error") { }
+                else {
+                    $(this_ref).replaceWith(`<span>${phrase}</span>`);
+                }
+            },
+            "json"
+        );
+    });
+    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").on("click", ".options .question-option button.delete-option", function () {
+        this_ref = this
+        id = $(this).closest(".question-option").find("input[type='checkbox']").attr("id");
+        $.post("/api/options.php", {
+            action: "delete",
+            id: id
+        },
+            function (data, textStatus, jqXHR) {
+                if (data.type == "error") { }
+                else {
+                    $(this_ref).closest(".question-option").remove();
+                }
+            },
+            "json"
+        );
+    })
     $(".tests .crud-buttons #delete-all-tests").click(function () {
         $(".prompt#delete-all-tests-prompt").show();
     });
@@ -116,13 +303,19 @@ $(document).ready(function () {
     });
     $(document).on("submit", "form[name='new-question-form']", function () {
         test_id = $(this).find("input[name='test-id']#test-id").val();
+        if ($(this).find("input[name='question']#question").val() == "") return false;
+        if (!test_id.match(/^[1-9]+[0-9]*$/g)) return false;
         $.post("?", {
             "add-question": 'add_question',
             "test-id": test_id,
             question: btoa($(this).find("input[name='question']#question").val())
         },
             function (data, textStatus, jqXHR) {
-                console.log(data, textStatus, jqXHR);
+                if (data.type == "error") { }
+                else {
+                    $("form[name='new-question-form'] input[name='question']#question").val("")
+                    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").append(question_DOM(data.id, data.question, data.score));
+                }
             },
             "json"
         );

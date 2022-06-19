@@ -1,9 +1,6 @@
 <?php
-function is_logged_in()
-{
-    return true;
-}
 require_once(__DIR__ . "/../student-interface/Includes/Models/Tests.php");
+require_once(__DIR__ . "/../student-interface/Includes/Functions.php");
 require_once(__DIR__ . "/../student-interface/Includes/Models/Questions.php");
 if (isset($_POST['add-test'])) {
     Tests::insert([
@@ -32,14 +29,9 @@ if (isset($_POST['add-question'])) {
         "question" => $question,
         "score" => 1
     ]);
-    if ($s) {
-        echo json_encode([
-            "test_id" => $test_id,
-            "question" => $question,
-            "score" => 1
-        ]);
-        die();
-    }
+    if ($s) echo json_encode($s);
+    else return message("error", "Error While Adding the Question, Please Contact the Administrator");
+    die();
 }
 $tests = Tests::select();
 ?>
@@ -185,20 +177,32 @@ $tests = Tests::select();
                             </div>
                             <div class="questions-list">
                                 <div class="new-question">
-                                    <form method="POST" autocomplete="off" name="new-question-form">
+                                    <form action="#" method="POST" autocomplete="off" name="new-question-form">
                                         <input type="hidden" name="test-id" id="test-id" value="">
                                         <input type="text" name="question" id="question" placeholder="Type your question here ...">
                                         <div class="dir-rtl">
-                                            <input class="btn-green" type="submit" value="Add Question" name="add-question" id="add-question">
+                                            <input class="btn-green" type="submit" value="Add Question">
                                         </div>
                                     </form>
                                 </div>
-                                <div class="question-item">
-                                    <h4 class="question-statement">Question1</h4>
-                                    <h5 class="question-option"><input type="checkbox" name="question1" id="resp1"> Resp 1</h5>
-                                    <h5 class="question-option"><input type="checkbox" name="question1" id="resp2"> Resp 2</h5>
-                                    <h5 class="question-option"><input type="checkbox" name="question1" id="resp3"> Resp 3</h5>
-                                    <h5 class="question-option"><input type="checkbox" name="question1" id="resp4"> Resp 4</h5>
+                                <div class="questions-items">
+                                    <div class="question-item">
+                                        <h4 class="question-statement">Question1</h4>
+                                        <div class="options">
+                                            <h5 class="question-option"><input type="checkbox" name="question1" id="resp1"> Resp 1</h5>
+                                            <h5 class="question-option"><input type="checkbox" name="question1" id="resp2"> Resp 2</h5>
+                                            <h5 class="question-option"><input type="checkbox" name="question1" id="resp3"> Resp 3</h5>
+                                            <h5 class="question-option"><input type="checkbox" name="question1" id="resp4"> Resp 4</h5>
+                                        </div>
+                                        <div class="question-actions">
+                                            <button class="question-action" data-action="delete-question">
+                                                <i class="fa-solid fa-trash-can"></i>
+                                            </button>
+                                            <button class="question-action" data-action="add-option">
+                                                <i class="fa-regular fa-square-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
