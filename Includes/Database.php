@@ -9,7 +9,7 @@ const DATABASE_NAME = "class_db";
 
 class Database
 {
-    private static function connect(): mysqli
+    public static function connect(): mysqli
     {
         return new mysqli(DATABASE_HOST, DATABASE_USERNAME, DATABASE_PASSWORD, DATABASE_NAME);
     }
@@ -185,10 +185,10 @@ class Database
         return $data;
     }
 
-    public static function count(string $table, $condition = "TRUE"): array|false
+    public static function count(string $table, $condition = "TRUE"): int|false
     {
         // Build Query
-        $query = "SELECT COUNT(*) AS count FROM $table";
+        $query = "SELECT COUNT(*) AS count FROM $table WHERE $condition";
 
         // MySQL Connect
         $db = get_called_class()::connect();
@@ -202,9 +202,6 @@ class Database
 
         // Return Result
         $row = $res->fetch_object();
-        return array(
-            "table" => $table,
-            "count" => $row->count
-        );
+        return intval($row->count);
     }
 }

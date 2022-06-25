@@ -115,6 +115,24 @@ input:active {
 	background-color: var(--danger-hover) !important;
 }
 
+.btn-green {
+	background-color: #13aa52 !important;
+	border-color: #13aa52 !important;
+	color: #f1f1f1 !important;
+}
+
+.btn-green:hover:not(:disabled) {
+	background-color: #2bba67 !important;
+	border-color: #2bba67 !important;
+	color: #f1f1f1 !important;
+}
+
+.btn-green:disabled {
+	background-color: #5ad78e !important;
+	border-color: #5ad78e !important;
+	color: #4aa36f !important;
+}
+
 .display-block {
 	display: block;
 }
@@ -637,6 +655,7 @@ footer .footer-dummy a {
 	position: relative;
 	font-weight: bold;
 }
+
 .dashboard .dashboard-sidebar .sidebar-menu .sidebar-link .link-icon {
 	display: inline-block;
 	margin-right: 10px;
@@ -644,6 +663,7 @@ footer .footer-dummy a {
 	width: 30px;
 	text-align: center;
 }
+
 .dashboard .dashboard-sidebar .sidebar-menu .sidebar-link .indicator {
 	opacity: 0;
 	position: absolute;
@@ -653,6 +673,7 @@ footer .footer-dummy a {
 	width: 1.25em;
 	line-height: 1.25em;
 }
+
 .dashboard .dashboard-sidebar .sidebar-menu .sidebar-link .indicator i {
 	display: block;
 	width: 100%;
@@ -663,6 +684,7 @@ footer .footer-dummy a {
 	transition: all .2s ease-in-out;
 	color: #fff;
 }
+
 .dashboard .dashboard-sidebar .sidebar-menu .sidebar-link:hover {
 	background-color: #333;
 	color: #fff !important;
@@ -672,6 +694,7 @@ footer .footer-dummy a {
 .dashboard .dashboard-sidebar .sidebar-menu .sidebar-link:hover .indicator {
 	opacity: 1;
 }
+
 .dashboard-boxes {
 	display: flex;
 	flex-wrap: wrap;
@@ -687,36 +710,78 @@ footer .footer-dummy a {
 .dashboard .dashboard-content .content-title {
 	font-size: 3.5em;
 	font-weight: normal;
-	padding: 15px 0;
+	padding-bottom: 15px;
 }
 
-.dashboard .courses {
+.dashboard .dashboard-content .content-description {
+	font-size: 1.4em;
+	color: #555;
+}
+
+.dashboard .dashboard-content .content-thumbnail {
+	display: block;
+	margin: 20px auto;
+	border-radius: 4px;
+	width: 500px;
+	padding: 3px;
+	background: var(--yellow);
+}
+
+.dashboard .dashboard-content .pdf-download-button {
+	text-align: center;
+}
+
+.dashboard .dashboard-content .pdf-download-button a {
+	display: inline-block;
+	padding: 10px 15px;
+	border-radius: 3px;
+	background-color: #CE273A;
+	font-size: 1.2em;
+	color: #fff;
+	font-weight: bold;
+}
+
+.dashboard .dashboard-content .pdf-download-button a:hover {
+	background-color: #228f1a;
+}
+
+.dashboard .dashboard-content .pdf-download-button a:hover i::before {
+	content: "\f0ed";
+}
+
+.dashboard .dashboard-content .pdf-download-button a:hover i {
+	content: "\f0ed";
+	font-weight: 900;
+}
+
+.dashboard .courses,
+.dashboard .tests {
 	background-color: #fff;
-	padding: 0 50px 20px;
+	padding: 20px 50px;
 }
 
-.dashboard .courses .courses-cards {
+.dashboard .elements-cards {
 	display: flex;
 	flex-wrap: wrap;
 }
 
-.dashboard .courses .courses-cards .course-card {
+.dashboard .elements-cards .element-card {
 	padding: 5px;
 	width: 33.33%;
 }
 
-.dashboard .courses .courses-cards .course-card .course-card-thumbnail{
+.dashboard .elements-cards .element-card .element-card-thumbnail {
 	height: 200px;
 	position: relative;
 	/* box-shadow: 0 0 30px -5px rgba(0, 0, 0, .8); */
 }
 
-.dashboard .courses .courses-cards .course-card .course-card-thumbnail img {
+.dashboard .elements-cards .element-card .element-card-thumbnail img {
 	width: 100%;
 	height: 100%;
 }
 
-.dashboard .courses .courses-cards .course-card .course-card-body {
+.dashboard .elements-cards .element-card .element-card-body {
 	transition: all .3s ease-in-out;
 	display: block;
 	background-color: #fff;
@@ -727,11 +792,11 @@ footer .footer-dummy a {
 	box-shadow: inset 0 0 0 1.5px rgba(200, 200, 200, .3), 0 0 15px -5px rgba(0, 0, 0, .2);
 }
 
-.dashboard .courses .courses-cards .course-card .course-card-body:hover {
+.dashboard .elements-cards .element-card .element-card-body:hover {
 	transform: scale(1.06);
 }
-	
-.dashboard .courses .courses-cards .course-card .course-card-body .course-card-title {
+
+.dashboard .elements-cards .element-card .element-card-body .element-card-title {
 	padding: 8px 0;
 	color: #444;
 }
@@ -803,6 +868,117 @@ footer .footer-dummy a {
 	font-size: 1.3em;
 	line-height: 2em;
 }
+
+.pdf-viewer-buttons {
+	text-align: center;
+}
+
+#pdf-viewer {
+	width: 500px;
+	margin: 15px auto;
+	max-width: 100%;
+	transition: all .25s ease-in-out;
+	background-color: #CE273A;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+#pdf-viewer:empty {
+	width: 500px;
+	height: 150px;
+	position: relative;
+}
+
+#pdf-viewer:empty:after {
+	content: 'PDF VIEWER';
+	top: 0;
+	left: 0;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	color: #fff;
+	line-height: 150px;
+	text-align: center;
+	font-size: 2em;
+}
+
+#pdf-viewer canvas {
+	display: block;
+}
+
+.questions .question {
+	padding: 15px;
+	border-bottom: dashed 2px #EEE;
+}
+
+.questions .question:last-child {
+	border-bottom: none;
+}
+
+.questions .question .statement {
+	font-size: 1.5em;
+	padding: 10px 0;
+}
+
+.questions .question .options .option {
+	margin: 8px 0;
+	padding-left: 15px;
+}
+
+.questions .question .options .option label {
+	font-size: 1em;
+	padding: 10px;
+	border-radius: 5px;
+	display: block;
+	cursor: pointer;
+	transition: all .15s ease-in-out;
+	position: relative;
+}
+
+.questions .question .options .option input {
+	display: none;
+}
+
+.questions .question .options .option input:checked+label {
+	box-shadow: inset 0 0 0 3px #f29952;
+}
+
+.questions .question .options .option label:hover {
+	background-color: #ffdac0;
+}
+
+.questions .question .options .option label.correct:after {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: 100%;
+	height: 100%;
+	width: 3px;
+	background-color: #13aa52;
+}
+
+.questions .question .options .option label.answer:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: calc(100% + 3px);
+	height: 100%;
+	width: 3px;
+	background-color: #dcde3c;
+}
+
+.questions .submit-test {
+	padding: 20px 0;
+	text-align: center;
+}
+
+.tests .score {
+	color: #235a23;
+	font-weight: bold;
+	padding: 10px 0;
+	font-size: 1.5em;
+}
+
 
 /* Desktops, large screens */
 @media screen and (max-width: 1200px) {}

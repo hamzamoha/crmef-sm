@@ -1,6 +1,8 @@
 <?php
 require_once(__DIR__ . "/../Includes/Functions.php");
 require_once(__DIR__ . '/../Includes/Models/Students.php');
+require_once(__DIR__ . '/../Includes/Models/Courses.php');
+require_once(__DIR__ . '/../Includes/Models/Tests.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,7 +11,7 @@ require_once(__DIR__ . '/../Includes/Models/Students.php');
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>My Space</title>
     <link rel="stylesheet" href="/CSS/fonts.css">
     <link rel="stylesheet" href="/CSS/style.css">
     <link rel="stylesheet" href="/FontAwesome6/css/all.min.css">
@@ -37,14 +39,14 @@ require_once(__DIR__ . '/../Includes/Models/Students.php');
                         <div class="box-body">
                             <div class="box-icon"><i class="fa-solid fa-book"></i></div>
                             <div class="box-title">Courses</div>
-                            <div class="box-description">6</div>
+                            <div class="box-description"><?= Courses::count(); ?></div>
                         </div>
                     </a>
                     <a href="tests.php" class="box" style="width:26%;">
                         <div class="box-body">
                             <div class="box-icon"><i class="fa-solid fa-file-lines"></i></div>
                             <div class="box-title">Tests</div>
-                            <div class="box-description">3</div>
+                            <div class="box-description"><?= Tests::count(); ?></div>
                         </div>
                     </a>
                     <a href="#" class="box" style="width:34%;">

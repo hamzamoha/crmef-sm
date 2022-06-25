@@ -1,3 +1,13 @@
+<?php
+require_once(__DIR__ . "/../Includes/Models/Courses.php");
+
+if (isset($_GET['id'])) {
+    $course = Courses::get(intval($_GET['id']));
+} else {
+    $courses = Courses::paginate();
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,7 +15,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Courses</title>
     <link rel="stylesheet" href="/CSS/fonts.css">
     <link rel="stylesheet" href="/CSS/style.css">
     <link rel="stylesheet" href="/FontAwesome6/css/all.min.css">
@@ -29,31 +39,40 @@
             </div>
             <div class="dashboard-content">
                 <div class="courses">
-                    <h1 class="content-title">Courses</h1>
-                    <div class="courses-cards">
-                        <div class="course-card">
-                            <div class="course-card-thumbnail">
-                                <img src="/Images/course-1.jpg" alt="Course 1" title="Course 1">
-                            </div>
-                            <a href="#course1" class="course-card-body">
-                                <div class="course-card-title">
-                                    <h2>Course 1</h2>
+                    <?php if (isset($courses)) { ?>
+                        <h1 class="content-title">Courses</h1>
+                        <div class="elements-cards">
+                            <?php if ($courses) foreach ($courses as $count => $course) { ?>
+                                <div class="element-card">
+                                    <div class="element-card-thumbnail">
+                                        <img src="/courses/images/<?= $course->image; ?>" alt="<?= addslashes($course->title); ?>" title="<?= addslashes($course->title); ?>">
+                                    </div>
+                                    <a href="?id=<?= $course->id; ?>" class="element-card-body">
+                                        <div class="element-card-title">
+                                            <h2><?= $course->title; ?></h2>
+                                        </div>
+                                        <div class="element-card-subtitle"><?= $course->description; ?></div>
+                                    </a>
                                 </div>
-                                <div class="course-card-subtitle">PHP, JS, CSS3, HTML5</div>
-                            </a>
+                            <?php } ?>
                         </div>
-                        <div class="course-card">
-                            <div class="course-card-thumbnail">
-                                <img src="/Images/course-2.jpg" alt="Course 2" title="Course 2">
-                            </div>
-                            <a href="#course1" class="course-card-body">
-                                <div class="course-card-title">
-                                    <h2>Course 2</h2>
-                                </div>
-                                <div class="course-card-subtitle">Database, SQL, MySQL</div>
-                            </a>
+                    <?php } else if ($course) { ?>
+                        <h1 class="content-title">Course: <?= $course->title; ?></h1>
+                        <p class="content-description"><?= $course->description; ?></p>
+                        <img class="content-thumbnail" src="/courses/images/<?= $course->image; ?>" alt="<?= $course->title; ?>" title="<?= $course->title; ?>">
+                        <div class="pdf-download-button">
+                            <a href="/courses/pdfs/<?= $course->file; ?>"><i class="fa-regular fa-file-pdf"></i> Download</a>
                         </div>
-                    </div>
+                        <script src="/JS/pdf.js/pdf.min.js"></script>
+                        <div id="pdf-viewer" data-pdf="/courses/pdfs/<?= $course->file; ?>"></div>
+                        <script>
+                            let pdf_reader = new PDF_Reader(document.getElementById("pdf-viewer"));
+                        </script>
+                        <div class="pdf-viewer-buttons">
+                            <button id="prev-page">prev</button>
+                            <button id="next-page">next</button>
+                        </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>

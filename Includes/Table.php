@@ -12,13 +12,13 @@ abstract class Table
         $columns = implode(", ", $columnsArray);
 
         $valuesArray = array_values($dataArray);
-        foreach($valuesArray as $key=>$value){
+        foreach ($valuesArray as $key => $value) {
             $value = addslashes($value);
             $valuesArray[$key] = "'$value'";
         }
         $values = implode(", ", $valuesArray);
         $id = Database::insert(get_called_class()::$table, $columns, $values);
-        if($id) return get_called_class()::get($id);
+        if ($id) return get_called_class()::get($id);
         else return false;
     }
 
@@ -37,7 +37,7 @@ abstract class Table
         return Database::update(get_called_class()::$table, $dataArray, "id='$id'");
     }
 
-    public static function count(string $condition = "TRUE"): array|false
+    public static function count(string $condition = "TRUE"): int|false
     {
         return Database::count(get_called_class()::$table, $condition);
     }
@@ -50,5 +50,10 @@ abstract class Table
     public static function delete(string $condition = "FALSE")
     {
         return Database::delete(get_called_class()::$table, $condition);
+    }
+
+    public static function paginate(int $page = 1, int $perpage = 20, string $condition = "TRUE", string $orderby = "1", string $sort = "DESC")
+    {
+        return Database::paginate(get_called_class()::$table, $condition, $orderby, $sort, $perpage, $page);
     }
 }

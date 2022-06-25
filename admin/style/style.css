@@ -383,8 +383,7 @@ button:hover:not(:disabled) {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: radial-gradient(rgba(0, 0, 0, .9), transparent);
-
+    background-color: rgba(0,0,0,.4);
 }
 
 .prompt form {
@@ -563,6 +562,12 @@ button:hover:not(:disabled) {
  * 
  * */
 
+.courses .crud-table tr td img {
+    max-width: 100px;
+    max-height: 100px;
+    object-fit: contain;
+    display: block;
+}
 
 .courses .prompt form {
     width: 600px;
@@ -570,7 +575,7 @@ button:hover:not(:disabled) {
     overflow-x: auto;
 }
 
-.courses .prompt#new-course form .form-group {
+.courses .prompt#create-course form .form-group {
     margin: 10px 0;
 }
 
@@ -626,4 +631,74 @@ button:hover:not(:disabled) {
 
 .image-input input[type="file"]:hover:after {
     background-color: #ffb6a0;
+}
+
+.preview-pdf-file,
+.course-image-preview {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+
+.course-image-preview .old-image,
+.course-image-preview .new-image,
+.preview-pdf-file .old-pdf-file,
+.preview-pdf-file .new-pdf-file {
+    width: 50%;
+    padding: 10px;
+    flex: 1;
+}
+
+.course-image-preview img {
+    border-radius: 4px;
+    display: block;
+}
+
+.preview-pdf-file i {
+    display: block;
+    line-height: 80px;
+    padding: 5px 0;
+    font-size: 3em;
+    color: #CE273A;
+}
+
+.preview-pdf-file p {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.prompt#delete-course .course-data {
+    text-align: center;
+}
+
+.prompt#delete-course .course-data .course-image {
+    margin: 15px 0;
+}
+
+.prompt#delete-course .course-data .course-image img {
+    display: block;
+    border-radius: 4px;
+    margin: 0 auto;
+    max-height: 150px;
+    object-fit: contain;
+}
+
+.prompt#delete-course .course-data .course-title {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.prompt#delete-course .course-data .course-description {
+    font-size: 1.2em;
+    color: #222;
+}
+
+.prompt#delete-course .course-data .course-file {
+    background-color: #CE273A;
+    max-width: fit-content;
+    padding: 5px;
+    border-radius: 3px;
+    color: #f5f5f5;
+    margin: 15px auto;
 }
