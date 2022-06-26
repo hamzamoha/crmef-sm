@@ -1,4 +1,4 @@
-<div class="courses" data-label="#courses">
+<div class="courses" data-label="#courses" style="display: none;">
     <h1>Courses</h1>
     <div class="crud-buttons">
         <button class="btn-green" id="create-course">Create</button>

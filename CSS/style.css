@@ -409,7 +409,9 @@ input:active {
 	padding: 10px;
 }
 
-.boxes .box .inner-box {}
+.boxes .box .inner-box {
+	display: block;
+}
 
 .boxes .box .inner-box .thumbnail {
 	position: relative;

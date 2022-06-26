@@ -51,7 +51,7 @@
             </div>
             <div class="form-group text-center">
                 <input type="button" name="cancel" id="cancel" value="Cancel">
-                <input type="reset" name="reset" id="reset" value="Reset">
+                <input type="reset" value="Reset">
                 <input type="submit" name="add-test" id="add-test" value="Add" class="btn-green">
             </div>
         </form>

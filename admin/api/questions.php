@@ -21,6 +21,17 @@ if (isset($_POST['action']) && $_POST['action'] == "get") {
 
     die(json_encode($data));
 }
+if (isset($_POST['action']) && $_POST['action'] == "create") {
+    $test_id = $_POST['test-id'];
+    $question = base64_decode($_POST['question']);
+    $s = Questions::insert([
+        "test_id" => $test_id,
+        "question" => $question,
+        "score" => 1
+    ]);
+    if ($s) die(message("success", $s));
+    else die(message("error", "Error While Adding the Question, Please Contact the Administrator"));
+}
 if (isset($_POST['action']) && $_POST['action'] == "update") {
     $question_id = intval($_POST['id']);
 

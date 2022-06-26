@@ -32,6 +32,7 @@ function option_input_DOM($statement) {
 function image_DOM(src, alt, title = alt) {
     return `<img src="${src}" alt="${alt}" title="${title}">`;
 }
+
 /**
  * @param {number} count The count of the row
  * @param {Object} test The test object
@@ -68,9 +69,48 @@ $(document).ready(function () {
             $(".prompt").hide();
         }
     });
+    /**
+     * Add test form
+     */
     $(".tests .crud-buttons #add-test").click(function () {
+        $(".prompt#add-test-prompt form")[0].reset();
         $(".prompt#add-test-prompt").show();
     });
+    /**
+     * Submit test
+     * new test
+     * create test
+     */
+    $(".tests .prompt#add-test-prompt form").submit(function (e) {
+        e.preventDefault();
+        let data = new FormData(this);
+        data.append("_method", "create");
+        fetch("/admin/api/tests.php", {
+            method: "POST",
+            body: data
+        })
+            .then(res => res.json())
+            .then(async data => {
+                if (data.type == "success") {
+                    await $(".tests .crud-table tbody tr").each(async function () {
+                        await $(this).find("td:nth-child(2)").each(async function () {
+                            this.innerHTML = Number(this.innerText) + 1;
+                        });
+                    });
+                    let test = data.message;
+                    await $(".tests .crud-table tbody").prepend(test_row_DOM(1, test));
+                    await $(".prompt").hide();
+                    this.reset();
+                }
+                else {
+                    notification(data.type, data.message);
+                }
+            });
+        return false;
+    });
+    /**
+     * Edit Questions
+     */
     $(".tests .crud-buttons #edit-questions-test").click(async function () {
         test_id = 0;
         checkedCount = await $(".tests .crud-table input[type='checkbox'][name='select-test']:checked").each(async function () {
@@ -238,8 +278,32 @@ $(document).ready(function () {
             "json"
         );
     })
+    /**
+     * Truncate tests
+     */
     $(".tests .crud-buttons #delete-all-tests").click(function () {
         $(".prompt#delete-all-tests-prompt").show();
+    });
+    /**
+     * Submit Truncate tests
+     */
+    $(".tests .prompt#delete-all-tests-prompt form").submit(function (e) {
+        e.preventDefault();
+        fetch("/admin/api/tests.php", {
+            method: "POST",
+            body: "_method=truncate"
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.type == "success") {
+                    $(".tests .crud-table tbody tr").remove();
+                    $(".prompt").hide();
+                }
+                else {
+                    notification(data.type, data.message);
+                }
+            });
+        return false;
     });
     /**
      * 
@@ -247,7 +311,7 @@ $(document).ready(function () {
      * 
      */
     $(".tests .crud-buttons #modify-test").click(async function () {
-        test = {};
+        let test = {};
         checkedCount = await $(".tests .crud-table input[type='checkbox'][name='select-test']:checked").each(async function () {
             test.id = $(this).attr("id");
             test.date = $(this).closest("tr").find("td:nth-child(3)").text();
@@ -277,15 +341,17 @@ $(document).ready(function () {
             body: data
         }).then(data => data.json())
             .then(data => {
-                if(data.type == "success") {
+                if (data.type == "success") {
                     notification("success", "The Test has been modified successfuly !");
                     let test = data.message;
+                    test.date = $(this).find("span#test-date").text();
                     let row = $(`.tests .crud-table tbody tr td input[type="checkbox"][name="select-test"]#${test.id}`)
-                    .closest("tr");
+                        .closest("tr");
                     let count = Number(row.find("td:nth-child(2)").text());
                     row.replaceWith(test_row_DOM(count, test));
+                    $(".tests .crud-table input[type='checkbox'][name='select-test']").trigger("change");
                     $(".prompt").hide();
-                } 
+                }
             });
         return false;
     });
@@ -306,7 +372,35 @@ $(document).ready(function () {
         $(".prompt#delete-tests-prompt").find("input#tests-ids").val(ids);
         $(".prompt#delete-tests-prompt").show();
     });
-    $(".tests .crud-table input[type='checkbox'][name='select-test']").change(function () {
+    /**
+     * Submit Delete test
+     */
+    $(".tests .prompt#delete-tests-prompt form").submit(function (e) {
+        e.preventDefault();
+        let data = new FormData(this);
+        data.append("_method", "delete");
+        fetch("/admin/api/tests.php", {
+            method: "POST",
+            body: data
+        })
+            .then(res => res.json())
+            .then(async data => {
+                if (data.type == "success") {
+                    let test_ids = this['tests-ids'].value;
+                    await test_ids.split(",").forEach(async id => {
+                        await $(`.tests .crud-table tbody tr input[type="checkbox"][name="select-test"]#${id}`)
+                            .closest(`tr`)
+                            .remove();
+                    });
+                    await $(`.tests .crud-table tbody tr`).each(function (count) {
+                        $(this).find("td:nth-child(2)").text((count + 1));
+                    });
+                    $(".prompt").hide();
+                }
+            })
+        return false;
+    })
+    $(".tests .crud-table").on("change", "input[type='checkbox'][name='select-test']", function () {
         checkCount = $(".tests .crud-table input[type='checkbox'][name='select-test']").length;
         checkedCount = $(".tests .crud-table input[type='checkbox'][name='select-test']:checked").length;
         if (checkedCount == 1)
@@ -338,7 +432,7 @@ $(document).ready(function () {
             this.checked = false;
         }).trigger("change");
     });
-    $(".tests .crud-table tbody tr").click(function () {
+    $(".tests .crud-table tbody").on("click", "tr", function () {
         $(this).find("input[type='checkbox'][name='select-test']").each(function () {
             this.checked = !this.checked;
             $(this).trigger("change");
@@ -359,24 +453,36 @@ $(document).ready(function () {
         $(this).html(`<i class="fa-regular fa-window-maximize"></i>`);
         $(this).attr('id', 'zoom-questions')
     });
-    $(document).on("submit", "form[name='new-question-form']", function () {
-        test_id = $(this).find("input[name='test-id']#test-id").val();
-        if ($(this).find("input[name='question']#question").val() == "") return false;
+    /**
+     * Submit new question
+     * new question
+     * create question
+     */
+    $(".tests .prompt#questions-test-prompt .new-question form[name='new-question-form']").submit(async function (e) {
+        e.preventDefault();
+        test_id = this['test-id'].value;
+        if (this.question.value == "") return false;
         if (!test_id.match(/^[1-9]+[0-9]*$/g)) return false;
-        $.post("?", {
-            "add-question": 'add_question',
-            "test-id": test_id,
-            question: btoa($(this).find("input[name='question']#question").val())
-        },
-            function (data, textStatus, jqXHR) {
-                if (data.type == "error") { }
-                else {
-                    $("form[name='new-question-form'] input[name='question']#question").val("")
-                    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items").append(question_DOM(data.id, data.question, data.score));
+        //
+        let data = new FormData(this);
+        data.append("action", "create");
+        data.set("question", btoa(data.get("question")));
+        fetch("/admin/api/questions.php", {
+            method: "POST",
+            body: data
+        })
+            .then(res => res.json())
+            .then(async data => {
+                if (data.type == "success") {
+                    this.reset();
+                    question = data.message;
+                    $(".prompt#questions-test-prompt .test-questions .questions-list .questions-items")
+                        .append(question_DOM(question.id, question.question, question.score));
                 }
-            },
-            "json"
-        );
+                else {
+                    notification(data.type, data.message);
+                }
+            });
         return false;
     });
     /**
