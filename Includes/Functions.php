@@ -39,12 +39,32 @@ function upload(array $file, string $path): string|false
     if ($bool) return basename($full_path);
     else return false;
 }
-
-function student()
+/**
+ * @return object the current student logged_in or false
+ */
+function student(): false|object
 {
     return (object) [
         "id" => "1",
         "name" => "",
         "codeMassar" => ""
     ];
+}
+/**
+ * @return 
+ */
+function language_to_ext(string $language = null): false|string
+{
+    if ($language) {
+        $languages = [
+            "php" => "php",
+            "javascript" => "js",
+            "python" => "py",
+            "c" => "c",
+            "cpp" => "cpp",
+            "c++" => "cpp",
+        ];
+        $language = strtolower($language);
+        return array_key_exists($language, $languages) ? $languages[$language] : false;
+    }
 }

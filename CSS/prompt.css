@@ -1,0 +1,76 @@
+.prompt {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .4);
+    overflow-x: auto;
+}
+
+.prompt form {
+    width: 450px;
+    max-width: 100%;
+    padding: 50px;
+    background-color: #fff;
+    border-radius: 5px;
+    max-height: 100%;
+    overflow-x: auto;
+}
+
+.prompt form input[type='text'],
+.prompt form input[type='password'],
+.prompt form input[type='email'],
+.prompt form input[type='number'],
+.prompt form textarea {
+    display: block;
+    border: none;
+    line-height: 40px;
+    text-indent: 5px;
+    border-radius: 3px;
+    width: 100%;
+    margin: 10px 0;
+    background-color: #f3f3f3;
+    box-shadow: 0 0 3px rgba(0, 0, 0, .3);
+    font-family: inherit;
+}
+
+.prompt form textarea {
+    resize: none;
+}
+
+.prompt form select {
+    display: block;
+    width: 100%;
+    line-height: 40px;
+    height: 40px;
+    margin: 10px auto;
+    cursor: pointer;
+    font-family: inherit;
+    text-indent: 5px;
+}
+
+.prompt form input[type='button'],
+.prompt form input[type='submit'],
+.prompt form input[type='reset'] {
+    font-size: .85em;
+    margin: 5px;
+}
+
+.prompt .form-group {
+    margin: 15px 0;
+}
+
+.prompt .form-group label {
+    display: block;
+    margin: 5px 0;
+}
+
+.prompt .form-title>* {
+    font-weight: normal;
+    font-size: 2em;
+    padding: 10px 0;
+}

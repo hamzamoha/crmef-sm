@@ -324,13 +324,11 @@ button:hover:not(:disabled) {
     font-size: 8em;
 }
 
-.dashboard .dashboard-content .tests,
-.dashboard .dashboard-content .courses {
+.dashboard .dashboard-content>* {
     padding: 50px;
 }
 
-.dashboard .dashboard-content .tests>h1,
-.dashboard .dashboard-content .courses>h1 {
+.dashboard .dashboard-content>*>h1 {
     font-size: 3em;
     font-weight: normal;
     margin-bottom: 15px;
@@ -347,6 +345,10 @@ button:hover:not(:disabled) {
 
 .crud-table.crud-style-1 thead {
     background-color: #7597f6;
+    color: #fff;
+}
+.crud-table.crud-style-2 thead {
+    background-color: #ff6b6b;
     color: #fff;
 }
 
@@ -372,59 +374,6 @@ button:hover:not(:disabled) {
 
 .crud-table tbody tr:hover {
     background-color: #f0f0f0;
-}
-
-.prompt {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0,0,0,.4);
-}
-
-.prompt form {
-    width: 450px;
-    max-width: 100%;
-    padding: 50px;
-    background-color: #fff;
-    border-radius: 5px;
-}
-
-.prompt form input[type='text'],
-.prompt form input[type='password'],
-.prompt form input[type='email'],
-.prompt form input[type='number'] {
-    display: block;
-    border: none;
-    line-height: 40px;
-    text-indent: 5px;
-    border-radius: 3px;
-    width: 100%;
-    margin: 10px 0;
-    background-color: #f3f3f3;
-    box-shadow: 0 0 3px rgba(0, 0, 0, .3);
-    font-family: inherit;
-}
-
-.prompt form input[type='button'],
-.prompt form input[type='submit'],
-.prompt form input[type='reset'] {
-    font-size: .85em;
-    margin: 5px;
-}
-
-.prompt .form-group {
-    margin: 15px 0;
-}
-
-.prompt .form-title>* {
-    font-weight: normal;
-    font-size: 2em;
-    padding: 10px 0;
 }
 
 .test-questions {
@@ -575,10 +524,6 @@ button:hover:not(:disabled) {
     overflow-x: auto;
 }
 
-.courses .prompt#create-course form .form-group {
-    margin: 10px 0;
-}
-
 .file-input input[type="file"] {
     --height: 50px;
     display: block;
@@ -701,4 +646,13 @@ button:hover:not(:disabled) {
     border-radius: 3px;
     color: #f5f5f5;
     margin: 15px auto;
+}
+
+/*
+    Kata style // 30 June 2022 ; 10:17 PM
+*/
+
+.kata .prompt#create-kata form {
+    max-width: 100%;
+    width: 800px;
 }

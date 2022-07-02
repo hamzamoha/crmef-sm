@@ -26,28 +26,38 @@ class PDF_Reader {
      * 
      * @param {string} url The URL to the pdf
      * @param {HTMLElement} div The output element
+     * @param {HTMLElement} input The page number output
      * @returns {PDF_Reader} this object
      */
-    constructor(div) {
+    constructor(div, input) {
         pdfjsLib.GlobalWorkerOptions.workerSrc = "/JS/pdf.js/pdf.worker.min.js";
         this.div = div;
+        this.input = input;
         this.url = div.getAttribute("data-pdf");
         this.document = pdfjsLib.getDocument(this.url);
-        this.loadPdf();
         this.pages = [];
-        return this;
+        return this.loadPdf();
     }
+    /**
+     * 
+     * @param {Function} callback 
+     */
+    init(callback) {
+        callback.bind(this)();
+    }
+
     async loadPdf() {
         let this_ref = this;
-        this.document.promise.then(function (pdf) {
+        await this.document.promise.then(async function (pdf) {
             this_ref.pdf = pdf;
             this_ref.numPages = pdf.numPages;
-            this_ref.output();
-        }, function (reason) {
+            await this_ref.output();
+        }, async function (reason) {
             // PDF loading error
-            notification("error", reason.message)
+            notification("error", reason.message);
             console.error("Erron Reason !", reason);
         });
+        return this.setPaginator();
     }
     /**
      * 
@@ -79,37 +89,57 @@ class PDF_Reader {
      */
     async output() {
         this.div.innerHTML = ``;
+        let canvas_group = document.createElement("div");
+        canvas_group.className = "canvas-group";
         for (let i = 0; i < this.numPages; i++) {
             let canvas = document.createElement("canvas");
             await this.loadPage(canvas, i + 1);
-            $(canvas).hide()
-            this.div.appendChild(canvas);
+            await canvas_group.appendChild(canvas);
         }
-        $(this.div).find("canvas:first-child").show();
+        this.div.appendChild(canvas_group);
         return this;
+    }
+    /**
+     * 
+     * @param {HTMLElement} input 
+     */
+    async setPaginator() {
+        this.input.parentElement.setAttribute("data-max", this.numPages);
+        this.input.setAttribute("max", this.numPages);
+        this.input.setAttribute("min", Math.min(this.numPages, 1));
+        this.input.value = 1;
+        let this_ref = this;
+        this.input.addEventListener("change", async function (e) {
+            let page_index = parseInt(this.value);
+            if (page_index > this_ref.numPages) this.value = page_index = this_ref.numPages;
+            else if (page_index < 0) this.value = page_index = 1;
+            else if (page_index == 0) return false;
+            else this.value = page_index;
+            this_ref.div.querySelector(".canvas-group").style.transform = `translateX(calc(-${page_index - 1} * 100%))`;
+        });
     }
 }
 $(document).ready(function () {
     $(".pdf-viewer-buttons #next-page").click(function () {
-        let next_canvas = $("#pdf-viewer canvas:visible").next();
-        $("#pdf-viewer canvas").hide();
-        if (next_canvas.length == 0) {
-            $("#pdf-viewer canvas:first-child").show();
-        }
-        else {
-            next_canvas.show();
-        }
+        let input = $(this).closest(".pdf-viewer-buttons").find("#page-number input");
+        let page_index = parseInt(input.val());
+        let max = parseInt(input.attr("max"));
+        let min = parseInt(input.attr("min"));
+        if(page_index >= max) input.val(min);
+        else if(page_index < min) input.val(min);
+        else input.val((page_index + 1));
+        input[0].dispatchEvent(new Event("change"));
     });
 
     $(".pdf-viewer-buttons #prev-page").click(function () {
-        let prev_canvas = $("#pdf-viewer canvas:visible").prev();
-        $("#pdf-viewer canvas").hide();
-        if (prev_canvas.length == 0) {
-            $("#pdf-viewer canvas:last-child").show();
-        }
-        else {
-            prev_canvas.show();
-        }
+        let input = $(this).closest(".pdf-viewer-buttons").find("#page-number input");
+        let page_index = parseInt(input.val());
+        let max = parseInt(input.attr("max"));
+        let min = parseInt(input.attr("min"));
+        if(page_index <= min) input.val(max);
+        else if(page_index > max) input.val(max);
+        else input.val((page_index - 1));
+        input[0].dispatchEvent(new Event("change"));
     });
 
     /**
@@ -147,4 +177,30 @@ $(document).ready(function () {
             "json"
         );
     })
+
+    /**
+     * Solve Kata
+     */
+     $(".kata button#solve").click(function (e) {
+        $(".kata .prompt#solve-kata").show();
+     })
+     $(".kata .prompt#solve-kata form").submit(async function (e) {
+        e.preventDefault();
+        let data = new FormData();
+        data.append("_method", "create");
+        data.append("code", ace.edit(this.querySelector("#solve_kata")).getValue());
+        data.append("kata_id", this.id.value);
+        fetch("/api/kata.php", {
+            method: "POST",
+            body: data
+        })
+        .then(response => response.json())
+        then(async function (data) {
+            notification(data.type, data.message);
+            if(data.type == "success"){
+            }
+            else {
+            }
+        });
+     })
 })

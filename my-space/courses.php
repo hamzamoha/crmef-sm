@@ -65,13 +65,18 @@ if (isset($_GET['id'])) {
                         </div>
                         <script src="/JS/pdf.js/pdf.min.js"></script>
                         <div id="pdf-viewer" data-pdf="/courses/pdfs/<?= $course->file; ?>"></div>
-                        <script>
-                            let pdf_reader = new PDF_Reader(document.getElementById("pdf-viewer"));
-                        </script>
                         <div class="pdf-viewer-buttons">
                             <button id="prev-page">prev</button>
+                            <div id="page-number">
+                                <input type="number">
+                            </div>
                             <button id="next-page">next</button>
                         </div>
+                        <script async>
+                            let input = document.querySelector(".pdf-viewer-buttons #page-number input");
+                            let div = document.getElementById("pdf-viewer");
+                            let pdf_reader = new PDF_Reader(div, input);
+                        </script>
                     <?php } ?>
                 </div>
             </div>

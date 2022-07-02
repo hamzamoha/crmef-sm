@@ -141,6 +141,19 @@ input:active {
 	text-align: center;
 }
 
+.pill {
+	padding: 8px 12px;
+	border-radius: 5px;
+	color: #eee;
+	background-color: #777;
+	display: inline-block;
+	font-weight: bold;
+}
+
+.pill.php {
+	background-color: #44355a;
+}
+
 .my-auto {
 	margin-left: auto !important;
 	margin-right: auto !important;
@@ -715,6 +728,10 @@ footer .footer-dummy a {
 	padding-bottom: 15px;
 }
 
+.dashboard .dashboard-content .content-subtitle {
+	margin: 15px 0;
+}
+
 .dashboard .dashboard-content .content-description {
 	font-size: 1.4em;
 	color: #555;
@@ -757,7 +774,8 @@ footer .footer-dummy a {
 }
 
 .dashboard .courses,
-.dashboard .tests {
+.dashboard .tests,
+.dashboard .kata {
 	background-color: #fff;
 	padding: 20px 50px;
 }
@@ -818,6 +836,7 @@ footer .footer-dummy a {
 	background: #fff;
 	color: #333;
 	box-shadow: 0 0 18px -5px rgba(0, 0, 0, .6);
+	height: 100%;
 }
 
 .dashboard-boxes .box .box-icon {
@@ -875,14 +894,36 @@ footer .footer-dummy a {
 	text-align: center;
 }
 
+.pdf-viewer-buttons #page-number {
+	padding-right: 44px;
+	position: relative;
+	display: inline-block;
+	line-height: 44px;
+}
+
+.pdf-viewer-buttons #page-number::after {
+	content: "/ " attr(data-max);
+	position: absolute;
+	top: 0;
+	right: 0;
+	height: 44px;
+	width: 44px;
+}
+
+.pdf-viewer-buttons #page-number input {
+	line-height: 44px;
+	text-indent: 5px;
+}
+
 #pdf-viewer {
 	width: 500px;
 	margin: 15px auto;
 	max-width: 100%;
 	transition: all .25s ease-in-out;
-	background-color: #CE273A;
+	border: #CE273A solid 5px;
 	padding: 5px;
 	border-radius: 5px;
+	overflow: hidden;
 }
 
 #pdf-viewer:empty {
@@ -906,6 +947,11 @@ footer .footer-dummy a {
 
 #pdf-viewer canvas {
 	display: block;
+}
+
+.canvas-group {
+	display: flex;
+	transition: all .15s ease-in-out;
 }
 
 .questions .question {

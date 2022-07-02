@@ -56,11 +56,11 @@ require_once(__DIR__ . '/../Includes/Models/Tests.php');
                             <div class="box-description">3</div>
                         </div>
                     </a>
-                    <a href="#" class="box" style="width:35%;">
+                    <a href="kata.php" class="box" style="width:35%;">
                         <div class="box-body">
-                            <div class="box-icon"><i class="fa-solid fa-file-lines"></i></div>
-                            <div class="box-title">BOX</div>
-                            <div class="box-description">description</div>
+                            <div class="box-icon"><i class="fa-solid fa-code"></i></div>
+                            <div class="box-title">Kata</div>
+                            <div class="box-description">Develop your coding skills with code challenges</div>
                         </div>
                     </a>
                     <a href="#" class="box" style="width:30%;">

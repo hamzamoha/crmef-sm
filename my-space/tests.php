@@ -6,10 +6,10 @@ require_once(__DIR__ . "/../Includes/Models/Options.php");
 if (isset($_GET['id'])) {
     $test = Tests::get(intval($_GET['id']));
     if ($test) {
-        $questions = Questions::select("test_id=" . $test->id);
+        $questions = Questions::select("test_id=" . $test->id, "1", "ASC");
         $fullScore = 0;
         foreach ($questions as $question) {
-            $question->options = Options::select("question_id=" . $question->id);
+            $question->options = Options::select("question_id=" . $question->id, "1", "ASC");
             $fullScore += intval($question->score);
         }
     }

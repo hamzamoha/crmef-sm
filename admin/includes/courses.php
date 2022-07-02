@@ -35,7 +35,7 @@
             </div>
             <div class="form-group">
                 <div class="file-input image-input">
-                    <label for="file">Course image</label>
+                    <label for="image">Course image</label>
                     <input type="file" name="image" id="image" accept="image/*" required="required">
                 </div>
             </div>
@@ -63,7 +63,7 @@
             </div>
             <div class="form-group text-center">
                 <input type="button" name="cancel" id="cancel" value="Cancel">
-                <input type="reset" name="reset" id="reset" value="Reset">
+                <input type="reset" value="Reset">
                 <input type="submit" name="create-test" id="create-test" value="Create" class="btn-green">
             </div>
         </form>

@@ -1,11 +1,13 @@
 <?php
-require_once(__DIR__ . "/../Includes/Models/Tests.php");
-require_once(__DIR__ . "/../Includes/Models/Courses.php");
 require_once(__DIR__ . "/../Includes/Functions.php");
+require_once(__DIR__ . "/../Includes/Models/Courses.php");
+require_once(__DIR__ . "/../Includes/Models/Tests.php");
 require_once(__DIR__ . "/../Includes/Models/Questions.php");
+require_once(__DIR__ . "/../Includes/Models/Kata.php");
 
 $tests = Tests::select();
 $courses = Courses::select();
+$katas = Kata::select();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,8 +19,10 @@ $courses = Courses::select();
     <title>Document</title>
     <link rel="stylesheet" href="/FontAwesome6/css/all.min.css">
     <link rel="stylesheet" href="/admin/style/style.css">
+    <link rel="stylesheet" href="/CSS/prompt.css">
     <script src="/admin/script/jquery.min.js"></script>
     <script src="/admin/script/script.js"></script>
+    <script src="/JS/prompt.js"></script>
 </head>
 
 <body>
@@ -30,6 +34,7 @@ $courses = Courses::select();
                 <a href="#" class="sidebar-link" data-target="#main">Home</a>
                 <a href="#" class="sidebar-link" data-target="#tests">Tests</a>
                 <a href="#" class="sidebar-link" data-target="#courses">Courses</a>
+                <a href="#" class="sidebar-link" data-target="#kata">Kata Practice</a>
                 <a href="#" class="sidebar-link" data-target="#">...</a>
             </div>
             <div class="dashboard-content">
@@ -38,6 +43,7 @@ $courses = Courses::select();
                 </div>
                 <?php include(__DIR__ . "/includes/tests.php"); ?>
                 <?php include(__DIR__ . "/includes/courses.php"); ?>
+                <?php include(__DIR__ . "/includes/kata.php"); ?>
             </div>
         </div>
     <?php

@@ -35,7 +35,7 @@ function image_DOM(src, alt, title = alt) {
 
 /**
  * @param {number} count The count of the row
- * @param {Object} test The test object
+ * @param {object} test The test object
  * @returns {string} HTML row
  */
 function test_row_DOM(count, test) {
@@ -48,6 +48,19 @@ function test_row_DOM(count, test) {
         <td>${test.description}</td>
     </tr>`
 }
+/**
+ * @param {number} count The count of the row
+ * @param {object} kata The test object
+ * @returns {string} HTML row
+ */
+function kata_row_DOM(count, kata) {
+    return `
+    <tr>
+        <td>${count}</td>
+        <td>${kata.title}</td>
+        <td>${kata.language}</td>
+    </tr>`
+}
 function notification(type = "info", message = "Hello World") {
     return console.log(`${type}: ${message}`);
 }
@@ -57,17 +70,6 @@ $(document).ready(function () {
         target = $(this).attr("data-target");
         $('.dashboard .dashboard-content > [data-label]').hide();
         $(`.dashboard .dashboard-content > [data-label='${target}']`).show();
-    });
-    $(".prompt form input[type=button][name=cancel]#cancel, .prompt").click(function () {
-        $(this).closest(".prompt").hide();
-    });
-    $(".prompt > *").click(function (e) {
-        e.stopPropagation();
-    });
-    $(document).keydown(function (e) {
-        if (e.which == 27) {
-            $(".prompt").hide();
-        }
     });
     /**
      * Add test form
@@ -543,6 +545,7 @@ $(document).ready(function () {
                 }
             })
             .then(() => {
+                this.reset();
                 $(".prompt").hide();
             })
             .catch(e => console.error(e));
@@ -574,7 +577,12 @@ $(document).ready(function () {
                     <td><img src="/courses/images/${course.image}"></td>
                 </tr>`)
             })
-            .then(() => {
+            .then(async () => {
+                this.reset();
+                this.image.removeAttribute("data-message");
+                this.file.removeAttribute("data-message");
+                $(this).find(".course-image-preview img").remove();
+                $(this).find(".preview-pdf-file p").html("-- No file chosen --");
                 $(".prompt").hide();
             })
             .catch(e => console.error("Error: ", e))
@@ -682,4 +690,69 @@ $(document).ready(function () {
             .catch(e => console.error("Error: ", e))
         return false;
     });
+    /**
+     * 
+     * Kata Part
+     * started: 30 Juin 2022, 04:21 PM
+     * 
+     */
+    /**
+     * Load the snippet
+     * @param {string} language programming language
+     */
+    async function load_snippet(language) {
+        let data = new FormData();
+        data.append("_method", "get");
+        data.append("language", language);
+        await fetch("/admin/api/snippets.php", {
+            method: "POST",
+            body: data
+        })
+            .then(res => res.json())
+            .then(async function (data) {
+                if (data.type == "success") {
+                    await ace.edit("tester_code").setValue(data.message);
+                }
+                else
+                    notification(data.type, data.message)
+            })
+            .catch(e => console.log("Error while fetching", e));
+    }
+    $(".kata .crud-buttons #create-kata").click(async function () {
+        await $(".kata .prompt#create-kata form")[0].reset();
+        await load_snippet($(".kata .prompt#create-kata form")[0].language.value);
+        await $(".kata .prompt#create-kata").show();
+    });
+    $(".kata .prompt#create-kata form").on("change", "select[name='language']#language", async function () {
+        await ace.edit("tester_code").session.setMode(`ace/mode/${this.value}`);
+        this.style.height = "0";
+        await load_snippet(this.value);
+        this.removeAttribute("style");
+    });
+    $(".kata .prompt#create-kata form").on("reset", async function () {
+        await ace.edit("tester_code").setValue("");
+    });
+    $(".kata .prompt#create-kata form").on("submit", async function (e) {
+        e.preventDefault();
+        let data = new FormData(this);
+        data.append("tester", ace.edit(this.querySelector("#tester_code")).getValue());
+        data.append("_method", "create");
+        fetch("/admin/api/kata.php", {
+            method: "POST",
+            body: data
+        })
+            .then(res => res.json())
+            .then(message => {
+                if (message.type == "success") {
+                    $(".kata .crud-table tbody").prepend(kata_row_DOM(1, message.message));
+                    $(".prompt").hide();
+                    this.reset();
+                }
+                else {
+                    notification(message.type, message.message);
+                }
+            })
+            .catch(e => console.error("Error while `fetch` !", e));
+    });
+
 });
