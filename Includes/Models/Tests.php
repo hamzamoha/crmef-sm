@@ -22,11 +22,10 @@ class Tests extends Table
     public static function score(int $test_id): int
     {
         if(Tests::is_passed($test_id)){
-            $answers = Answers::select("test_id=$test_id AND student_id=" . student()->id);
+            $questions = Questions::select("test_id=$test_id");
             $score = 0;
-            foreach($answers as $answer){
-                if(Answers::is_right($answer->question_id)){
-                    $question = Questions::get($answer->question_id);
+            foreach($questions as $question){
+                if(Answers::is_right($question->id)){
                     $score += intval($question->score);
                 }
             }

@@ -46,7 +46,7 @@ function student(): false|object
 {
     return (object) [
         "id" => "1",
-        "name" => "",
+        "name" => "John",
         "codeMassar" => ""
     ];
 }

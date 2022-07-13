@@ -48,7 +48,7 @@
             <div class="form-group">
                 <label>Tester</label>
                 <div id="tester_code"></div>
-                <button>Beautify</button>
+                <button name="beautify" id="beautify">Beautify</button>
                 <script src="/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
                 <script src="/ace-builds/src-min-noconflict/ext-beautify.js" type="text/javascript" charset="utf-8"></script>
                 <script>

@@ -154,9 +154,24 @@ input:active {
 	background-color: #44355a;
 }
 
-.my-auto {
+.pill.javascript {
+	background-color: #f0db4f;
+	color: #323330;
+}
+
+.pill.python {
+	background-color: #306998;
+	color: #FFD43B;
+}
+
+.mx-auto {
 	margin-left: auto !important;
 	margin-right: auto !important;
+}
+
+.mx-2 {
+	margin-left: .5em !important;
+	margin-right: .5em !important;
 }
 
 .my-1 {
@@ -177,6 +192,26 @@ input:active {
 .my-4 {
 	margin-top: 1em !important;
 	margin-bottom: 1em !important;
+}
+
+.text-green {
+	color: var(--green-shade-1);
+}
+
+.outline-green {
+	border: solid var(--green-shade-1) 2px;
+}
+
+.p-3 {
+	padding: .75em;
+}
+
+.fw-bold {
+	font-weight: bold;
+}
+
+.display-inline-block {
+	display: inline-block;
 }
 
 .header .nav {

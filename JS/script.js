@@ -125,8 +125,8 @@ $(document).ready(function () {
         let page_index = parseInt(input.val());
         let max = parseInt(input.attr("max"));
         let min = parseInt(input.attr("min"));
-        if(page_index >= max) input.val(min);
-        else if(page_index < min) input.val(min);
+        if (page_index >= max) input.val(min);
+        else if (page_index < min) input.val(min);
         else input.val((page_index + 1));
         input[0].dispatchEvent(new Event("change"));
     });
@@ -136,8 +136,8 @@ $(document).ready(function () {
         let page_index = parseInt(input.val());
         let max = parseInt(input.attr("max"));
         let min = parseInt(input.attr("min"));
-        if(page_index <= min) input.val(max);
-        else if(page_index > max) input.val(max);
+        if (page_index <= min) input.val(max);
+        else if (page_index > max) input.val(max);
         else input.val((page_index - 1));
         input[0].dispatchEvent(new Event("change"));
     });
@@ -181,26 +181,72 @@ $(document).ready(function () {
     /**
      * Solve Kata
      */
-     $(".kata button#solve").click(function (e) {
-        $(".kata .prompt#solve-kata").show();
-     })
-     $(".kata .prompt#solve-kata form").submit(async function (e) {
-        e.preventDefault();
+    $(".kata button#solve").click(function (e) {
         let data = new FormData();
-        data.append("_method", "create");
-        data.append("code", ace.edit(this.querySelector("#solve_kata")).getValue());
-        data.append("kata_id", this.id.value);
+        data.append("_method", "get");
+        data.append("id", this.getAttribute("data-kata-id"));
         fetch("/api/kata.php", {
             method: "POST",
             body: data
         })
-        .then(response => response.json())
-        then(async function (data) {
-            notification(data.type, data.message);
+        .then(res => res.json())
+        .then(async function (data) {
             if(data.type == "success"){
-            }
-            else {
+                let editor = document.querySelector(".kata .prompt#solve-kata form #solve_kata");
+                await ace.edit(editor).setValue(data.message);
+                $(".kata .prompt#solve-kata").show();
             }
         });
-     })
+    })
+    /**
+     * View Code
+     */
+    $(".kata button#view-code").click(function (e) {
+        let data = new FormData();
+        data.append("_method", "get");
+        data.append("id", this.getAttribute("data-kata-id"));
+        e.preventDefault();
+        fetch("/api/kata.php", {
+            method: "POST",
+            body: data
+        })
+        .then(res => res.json())
+        .then(async function (data) {
+            if(data.type == "success"){
+                await ace.edit(document.querySelector(".kata .prompt#show-code #code_kata")).setValue(data.message);
+                $(".kata .prompt#show-code").show();
+            }
+        });
+        return false;
+    })
+    $(".kata .prompt#solve-kata form").submit(async function (e) {
+        e.preventDefault();
+        let data = new FormData();
+        data.append("_method", "create");
+        data.append("code", ace.edit(this.querySelector("#solve_kata")).getValue());
+        data.append("id", this.id.value);
+        fetch("/api/kata.php", {
+            method: "POST",
+            body: data
+        })
+            .then(response => response.json())
+            .then(async function (data) {
+                notification(data.type, data.message);
+                if (data.type == "success") {
+                    setInterval(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
+                else {
+                }
+            });
+    });
+    //beautify
+    $(".kata .prompt#create-kata form button[name=beautify]#beautify").click(function(e) {
+        e.preventDefault();
+        let tester_code = $(this).closest("form").find("#tester_code")[0];
+        let beautify = ace.require("ace/ext/beautify"); // get reference to extension
+        beautify.beautify(ace.edit(tester_code).session);
+        return false;
+    });
 })

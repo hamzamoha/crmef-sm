@@ -61,7 +61,12 @@ if (isset($_GET['id'])) {
                             <div class="pill <?= $kata->language; ?>"><?= $kata->language; ?></div>
                         </div>
                         <p class="content-description"><?= str_replace("\n", "<br>", $kata->description); ?></p>
-                        <button class="btn-green my-4" id="solve">Solve</button>
+                        <?php if (Kata::is_solved($kata->id)) { ?>
+                            <h2 class="text-green fw-bold my-3 mx-2"><i class="fa-solid fa-check"></i> Solved</h2>
+                            <button id="view-code" data-kata-id="<?= $kata->id; ?>">View Code</button>
+                        <?php } else { ?>
+                            <button class="btn-green my-4" id="solve" data-kata-id="<?= $kata->id; ?>">Solve</button>
+                        <?php } ?>
                     <?php } ?>
                     <div class="prompt" id="solve-kata" style="display: none;">
                         <form autocomplete="off" enctype="multipart/form-data">
@@ -87,6 +92,28 @@ if (isset($_GET['id'])) {
                                 <input type="hidden" name="id" value="<?= $kata->id; ?>">
                                 <input type="button" name="cancel" id="cancel" value="Cancel">
                                 <input type="submit" name="submit-kata" id="submit-kata" value="Submit" class="btn-green">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="prompt" id="show-code" style="display: none;">
+                        <form autocomplete="off" enctype="multipart/form-data" onsubmit="return false" novalidate>
+                            <h1>Code Kata</h1>
+                            <h2><?= $kata->title; ?></h2>
+                            <div class="form-group">
+                                <div id="code_kata"></div>
+                                <script src="/ace-builds/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
+                                <script src="/ace-builds/src-min-noconflict/ext-beautify.js" type="text/javascript" charset="utf-8"></script>
+                                <script>
+                                    let editor1 = ace.edit("code_kata");
+                                    editor1.setTheme("ace/theme/cobalt");
+                                    editor1.session.setMode("ace/mode/<?= $kata->language; ?>");
+                                    editor1.setFontSize(16);
+                                    editor1.setOptions({
+                                        minLines: 10,
+                                        maxLines: 30
+                                    });
+                                    editor1.setReadOnly(true);
+                                </script>
                             </div>
                         </form>
                     </div>

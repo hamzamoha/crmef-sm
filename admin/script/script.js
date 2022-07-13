@@ -737,12 +737,12 @@ $(document).ready(function () {
         let data = new FormData(this);
         data.append("tester", ace.edit(this.querySelector("#tester_code")).getValue());
         data.append("_method", "create");
-        fetch("/admin/api/kata.php", {
+        await fetch("/admin/api/kata.php", {
             method: "POST",
             body: data
         })
             .then(res => res.json())
-            .then(message => {
+            .then(async message => {
                 if (message.type == "success") {
                     $(".kata .crud-table tbody").prepend(kata_row_DOM(1, message.message));
                     $(".prompt").hide();
@@ -753,6 +753,14 @@ $(document).ready(function () {
                 }
             })
             .catch(e => console.error("Error while `fetch` !", e));
+        return false;
     });
-
+    //beautify
+    $(".kata .prompt#create-kata form button[name=beautify]#beautify").click(function (e) {
+        e.preventDefault();
+        let tester_code = $(this).closest("form").find("#tester_code")[0];
+        let beautify = ace.require("ace/ext/beautify"); // get reference to extension
+        beautify.beautify(ace.edit(tester_code).session);
+        return false;
+    });
 });
